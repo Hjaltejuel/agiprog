@@ -1,7 +1,28 @@
 ﻿@page "/"
+@using Data
+<div class="centerText">
+    <h1>Welcome to AgiProg, your new roadmap and status tool!! </h1>
+    We are happy to have you, insert your given meeting ID.
 
-<h1>Hello, world!</h1>
 
-Welcome to your new app.
+    @code {
+        private MeetingID meeting = new MeetingID();
+        private void HandleValidSubmit()
+        {
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+        }
+    }
+</div>
+
+<div class="autoMargin">
+
+
+    <EditForm Model="@meeting" OnValidSubmit="@HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <InputText id="Meeting ID" @bind-Value="meeting.meetingId" />
+
+        <button type="submit">Submit</button>
+    </EditForm>
+</div>

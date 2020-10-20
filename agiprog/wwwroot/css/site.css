@@ -7,7 +7,16 @@ html, body {
 a, .btn-link {
     color: #0366d6;
 }
+.centerText {
+    text-align: center;
+}
 
+.autoMargin {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 400px;
+}
 .btn-primary {
     color: #fff;
     background-color: #1b6ec2;
