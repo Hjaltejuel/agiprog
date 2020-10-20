@@ -1,28 +1,27 @@
 ﻿@page "/"
 @using Data
-<div class="centerText">
-    <h1>Welcome to AgiProg, your new roadmap and status tool!! </h1>
-    We are happy to have you, insert your given meeting ID.
+<section>
+    <div class="wrapper">
+        <h1 class="alpha lato thin thick-header-line uppercase ls-small">
+            Agiprog
+        </h1>
+        <p class="mega open-sans bold uppercase">
+            Learning agile made easy!
+        </p>
+    </div>
+</section>
 
+<div class="form__group field">
+    <input type="input" class="form__field" placeholder="Meeting ID" name="name" id='name' required />
+    <label for="name" class="form__label">Meeting ID</label>
+</div>
 
-    @code {
-        private MeetingID meeting = new MeetingID();
-        private void HandleValidSubmit()
-        {
+@code {
+    private MeetingID meeting = new MeetingID();
+    private void HandleValidSubmit()
+    {
 
-        }
     }
-</div>
-
-<div class="autoMargin">
+}
 
 
-    <EditForm Model="@meeting" OnValidSubmit="@HandleValidSubmit">
-        <DataAnnotationsValidator />
-        <ValidationSummary />
-
-        <InputText id="Meeting ID" @bind-Value="meeting.meetingId" />
-
-        <button type="submit">Submit</button>
-    </EditForm>
-</div>
