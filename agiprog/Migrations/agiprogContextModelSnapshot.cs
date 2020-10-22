@@ -213,6 +213,67 @@ namespace agiprog.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
+            modelBuilder.Entity("agiprog.Data.Meeting", b =>
+                {
+                    b.Property<string>("MeetingId")
+                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                    b.Property<int>("completedSteps")
+                        .HasColumnType("int");
+
+                    b.HasKey("MeetingId");
+
+                    b.ToTable("meetings");
+                });
+
+            modelBuilder.Entity("agiprog.Data.Roadmap", b =>
+                {
+                    b.Property<int>("RoadmapID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("MeetingId")
+                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                    b.Property<string>("name")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.HasKey("RoadmapID");
+
+                    b.HasIndex("MeetingId")
+                        .IsUnique();
+
+                    b.ToTable("roadmaps");
+                });
+
+            modelBuilder.Entity("agiprog.Data.Step", b =>
+                {
+                    b.Property<int>("StepId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<byte[]>("Img")
+                        .HasColumnType("longblob");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<int>("RoadmapId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("VideoUrl")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.HasKey("StepId");
+
+                    b.HasIndex("RoadmapId");
+
+                    b.ToTable("steps");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -260,6 +321,22 @@ namespace agiprog.Migrations
                     b.HasOne("agiprog.Areas.Identity.Data.agiprogUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("agiprog.Data.Roadmap", b =>
+                {
+                    b.HasOne("agiprog.Data.Meeting", "Meeting")
+                        .WithOne("RoadMap")
+                        .HasForeignKey("agiprog.Data.Roadmap", "MeetingId");
+                });
+
+            modelBuilder.Entity("agiprog.Data.Step", b =>
+                {
+                    b.HasOne("agiprog.Data.Roadmap", "Roadmap")
+                        .WithMany("Steps")
+                        .HasForeignKey("RoadmapId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

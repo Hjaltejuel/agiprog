@@ -3,11 +3,11 @@
 
 <AuthorizeView>
     <Authorized>
-        <a href="Identity/Account/Manage/Index">
+        <a class="seventh before after" href="Identity/Account/Manage/Index">
             Hello, @context.User.Identity.Name!
         </a>
         <form action="/Identity/Account/Logout?returnUrl=%2F" method="post">
-            <button class="nav-link btn btn-link" type="submit">Logout</button>
+            <button class="logout-btn" type="submit">Logout</button>
         </form>
     </Authorized>
     <NotAuthorized>

@@ -11,6 +11,10 @@ namespace agiprog.Data
 {
     public class agiprogContext : IdentityDbContext<agiprogUser>
     {
+
+        public DbSet<Meeting> meetings { get; set; }
+        public DbSet<Roadmap> roadmaps { get; set; }
+        public DbSet<Step> steps { get; set; }
         public agiprogContext(DbContextOptions<agiprogContext> options)
             : base(options)
         {

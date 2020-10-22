@@ -1,0 +1,25 @@
+﻿@page "/AdminMeeting"
+@attribute [Authorize]
+
+<h1>Create meetings</h1>
+
+
+
+<EditForm Model="@meeting" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <InputText id="name" @bind-Value="meeting.MeetingId" />
+
+    <button type="submit">Submit</button>
+</EditForm>
+
+
+@code {
+    private agiprog.Data.Meeting meeting = new Data.Meeting();
+
+    private void HandleValidSubmit()
+    {
+     
+    }
+}

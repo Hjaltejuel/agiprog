@@ -1,4 +1,7 @@
 ﻿@page "/"
+@inject MeetingService meetingService
+@inject IToastService toastService
+@inject NavigationManager NavigationManager
 @using Data
 <section>
     <div class="wrapper">
@@ -12,16 +15,41 @@
 </section>
 
 <div class="form__group field">
-    <input type="input" class="form__field" placeholder="Meeting ID" name="name" id='name' required />
+    <input @bind="meeting" @onkeypress="onKeyPress" disabled="@IsDisabled" type="input" class="form__field" placeholder="@placeholder" name="name" id='name' required />
     <label for="name" class="form__label">Meeting ID</label>
 </div>
 
 @code {
-    private MeetingID meeting = new MeetingID();
+    private String meeting;
+    private bool IsDisabled { get; set; }
+    private String placeholder = "asdfasdfsa";
     private void HandleValidSubmit()
     {
 
     }
+
+    private async void onKeyPress(KeyboardEventArgs args)
+    {
+
+        if (args.Key == "Enter")
+        {
+            IsDisabled = true;
+
+            var result = await meetingService.FindMeeting(meeting);
+            if (result == null)
+            {
+                toastService.ShowWarning("We were unable to find your specified meeting!");
+            }
+            else
+            {
+                NavigationManager.NavigateTo("/meeting/" + result.MeetingId);
+          }
+
+        }
+        IsDisabled = false;
+        StateHasChanged();
+    }
+
 }
 
 

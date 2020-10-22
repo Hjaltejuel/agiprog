@@ -30,6 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Blazored.Toast" Version="3.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.1.9" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.9" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.9" />
@@ -40,10 +41,6 @@
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.4" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="3.2.3" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="wwwroot\css\Images\" />
   </ItemGroup>
 
   <ItemGroup>
