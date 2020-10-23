@@ -8,6 +8,35 @@ html {
 *, *:before, *:after {
   box-sizing: inherit; }
 
+hr {
+  height: 1px;
+  background: white;
+  border: none;
+  outline: none;
+  margin: 3em 3em 5em; }
+  hr:before {
+    content: attr(data-symbol);
+    position: absolute;
+    top: 0;
+    left: 50%;
+    background: black;
+    color: white;
+    padding: 0.5em 3em;
+    transform: translate(-50%, -50%); }
+
+hr#eight {
+  background: transparent;
+  border-bottom: 2px dashed white;
+  width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 1.5em;
+  margin-bottom: 1.5em; }
+  hr#eight:before {
+    top: 3px;
+    left: 0;
+    padding-right: 2em; }
+
 .logout-btn {
   font-family: Hack, monospace;
   background: #d3d3d3;

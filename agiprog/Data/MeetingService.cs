@@ -20,6 +20,11 @@ namespace agiprog.Data
             return await agiprogContext.meetings.FindAsync(meetingId);
         }
 
+        public List<Meeting> FindAllMeetings()
+        {
+            return agiprogContext.meetings.ToList();
+        }
+
         public async Task<String> AddMeeting(Meeting meeting)
         {
             agiprogContext.meetings.Add(meeting);
