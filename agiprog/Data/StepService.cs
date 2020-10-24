@@ -33,12 +33,10 @@ namespace agiprog.Data
             return Step.StepId;
         }
 
-        public void RemoveStep(int StepId)
+        public async Task RemoveStep(Step step)
         {
-            var Step = new Step();
-            Step.StepId = StepId;
-            agiprogContext.steps.Attach(Step);
-            agiprogContext.steps.Remove(Step);
+            agiprogContext.steps.Remove(step);
+            await agiprogContext.SaveChangesAsync();
 
         }
     }

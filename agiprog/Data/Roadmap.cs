@@ -13,7 +13,7 @@ namespace agiprog.Data
 
         public List<Step> Steps { get; set; }
 
-        public String MeetingId { get; set; }
+        public String? MeetingId { get; set; }
         public Meeting Meeting { get; set; }
     }
 }

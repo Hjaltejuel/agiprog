@@ -32,13 +32,13 @@ namespace agiprog.Data
             return Roadmap.RoadmapID;
         }
 
-        public void RemoveRoadmap(int RoadMapId)
+        public async void RemoveRoadmap(int RoadMapId)
         {
             var Roadmap = new Roadmap();
             Roadmap.RoadmapID = RoadMapId;
             agiprogContext.roadmaps.Attach(Roadmap);
             agiprogContext.roadmaps.Remove(Roadmap);
-
+            await agiprogContext.SaveChangesAsync();
         }
     }
 }

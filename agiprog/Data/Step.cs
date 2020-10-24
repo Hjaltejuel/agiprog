@@ -19,11 +19,11 @@ namespace agiprog.Data
         [Required]
         public String Description { get; set; }
 
-        public String VideoUrl { get; set; }
+        public String? VideoUrl { get; set; }
 
-        public String Img { get; set; }
+        public String? Img { get; set; }
 
-        public int RoadmapId{ get; set;}
+        public int? RoadmapId{ get; set;}
 
         public Roadmap Roadmap { get; set; }
 

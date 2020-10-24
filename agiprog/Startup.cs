@@ -30,6 +30,7 @@ namespace agiprog
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddScoped<MeetingService>();
+            services.AddScoped<StepService>();
             services.AddBlazoredToast();
         }
 

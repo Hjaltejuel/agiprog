@@ -32,12 +32,13 @@ namespace agiprog.Data
             return meeting.MeetingId;
         }
 
-        public void RemoveMeeting(String meetingId)
+        public async void RemoveMeeting(String meetingId)
         {
             var meeting = new Meeting();
             meeting.MeetingId = meetingId;
             agiprogContext.meetings.Attach(meeting);
             agiprogContext.meetings.Remove(meeting);
+            await agiprogContext.SaveChangesAsync();
 
         }
 
