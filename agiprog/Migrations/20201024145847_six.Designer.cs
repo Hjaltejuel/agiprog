@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using agiprog.Data;
 
 namespace agiprog.Migrations
 {
     [DbContext(typeof(agiprogContext))]
-    partial class agiprogContextModelSnapshot : ModelSnapshot
+    [Migration("20201024145847_six")]
+    partial class six
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -218,11 +220,8 @@ namespace agiprog.Migrations
                     b.Property<string>("MeetingId")
                         .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
-                    b.Property<int>("CompletedSteps")
+                    b.Property<int>("completedSteps")
                         .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.HasKey("MeetingId");
 

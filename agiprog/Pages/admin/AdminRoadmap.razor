@@ -4,8 +4,11 @@
 @using BlazorInputFile
 @inject IToastService toastService
 @inject RoadmapService roadmapService
+@inject IJSRuntime JSRuntime
+@inject StepService stepService
 @attribute [Authorize]
 @using agiprog.Data
+
 <h1>Create Roadmaps</h1>
 
 <hr id="eight" />
@@ -44,11 +47,12 @@
         </div>
         <div class="col-md-5">
             <div class="form-group align-items-center">
-                <label class="font-weight-bold" for="video">An optional URL for a video representing the step</label>
-                <select class="selectpicker" multiple data-live-search="true">
-                    <option>Mustard</option>
-                    <option>Ketchup</option>
-                    <option>Relish</option>
+                <label class="font-weight-bold" for="selecter">Select the steps for this roadmap</label>
+                <select class="selectpicker" id="selecter" multiple>
+                    @foreach (var step in steps)
+                    {
+                        <option>@step.Key</option>
+                    }
                 </select>
             </div>
         </div>
@@ -69,7 +73,7 @@
 
 <h1>Created steps</h1>
 
-<div style="max-height:500px; overflow:scroll" class="list-group">
+<div style="max-height:500px; overflow:@overflow" class="list-group">
     @foreach (var s in roadmaps)
     {
         <div @onclick="() => select(s.RoadmapID)" class="list-group-item list-group-item-action flex-column align-items-start @(ActiveMessageId == s.RoadmapID ? "active" : "")">
@@ -101,7 +105,24 @@
             <div class="modal-body">
                 Description : @Modal.Description
                 <img style="max-width:100%" class="mr-3" src="@Modal.Image">
+           
+                <div style="max-height:500px; overflow:scroll" class="list-group">
+                    @if (Modal.Steps != null)
+                    {
+                    @foreach (var s in @Modal.Steps)
+                    {
+                        <div @onclick="() => select(s.StepId)" class="list-group-item list-group-item-action flex-column align-items-start @(ActiveMessageId == s.StepId ? "active" : "")">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1 text-black-50">Name : @s.Name</h5>
 
+                            </div>
+                            <p class="mb-1 text-black-50">Description : @s.Description</p>
+                            <small>Video URL : @(s.VideoUrl == null ? "No video defined" : s.VideoUrl)</small>
+
+                        </div>
+                    }
+                    }
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -112,9 +133,14 @@
 
 
 @code {
+
     private Roadmap roadmap = new Roadmap();
-    
+
     private Roadmap Modal = new Roadmap();
+
+    private String overflow { get ; set ; }
+
+    private Dictionary<String,Step> steps { get; set; }
 
     private String imageDataUrl { get; set; }
 
@@ -134,6 +160,15 @@
     protected override void OnInitialized()
     {
         roadmaps = roadmapService.FindAllRoadmaps();
+        if(roadmaps != null && roadmaps.Count != 0)
+        {
+            overflow = "scroll";
+        }
+        else
+        {
+            overflow = "none";
+        }
+        steps = stepService.FindAllSteps().ToDictionary(a => a.Name);
     }
 
     private async Task delete(Roadmap roadmap)
@@ -146,11 +181,19 @@
 
     private async Task HandleValidSubmit()
     {
-        roadmaps.Add(roadmap);
-        await roadmapService.AddRoadmap(roadmap);
-        toastService.ShowSuccess("Roadmap saved");
-        roadmap = new Roadmap();
-        StateHasChanged();
+        if (SelectedValue == null || SelectedValue.Length == 0)
+        {
+            toastService.ShowError("No steps defined, please add steps before creating a roadmap");
+        }
+        else
+        {
+            roadmap.Steps = SelectedValue.Select(i => steps[i]).ToList();
+            roadmaps.Add(roadmap);
+            await roadmapService.AddRoadmap(roadmap);
+            toastService.ShowSuccess("Roadmap saved");
+            roadmap = new Roadmap();
+            StateHasChanged();
+        }
     }
 
     private void select(int id)
@@ -205,6 +248,28 @@
             return;
         }
 
+    }
+    // inject jsruntime to call javascript code
+
+
+    // hold the callback selected value
+    public string[] SelectedValue { get; set; }
+
+    // call the javascript method to init the select picker
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender) // only needs to be called once per page render
+        {
+            await JSRuntime.InvokeVoidAsync("InitSelectPicker", DotNetObjectReference.Create(this), "OnSelectedValue", ".selectpicker");
+        }
+    }
+
+    // method which will be triggered by javascript, need to pass the method name 
+    [JSInvokable]
+    public void OnSelectedValue(string[] val)
+    {
+        SelectedValue = val;
+        StateHasChanged();
     }
 }
 

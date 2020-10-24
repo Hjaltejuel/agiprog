@@ -32,11 +32,8 @@ namespace agiprog.Data
             return meeting.MeetingId;
         }
 
-        public async void RemoveMeeting(String meetingId)
+        public async Task RemoveMeeting(Meeting meeting)
         {
-            var meeting = new Meeting();
-            meeting.MeetingId = meetingId;
-            agiprogContext.meetings.Attach(meeting);
             agiprogContext.meetings.Remove(meeting);
             await agiprogContext.SaveChangesAsync();
 

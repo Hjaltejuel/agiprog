@@ -19,7 +19,7 @@ namespace agiprog.Data
         public String Image { get; set; }
         [Required]
         public String Description { get; set; }
-        [Required]
+ 
         public List<Step> Steps { get; set; }
 
         public String? MeetingId { get; set; }
