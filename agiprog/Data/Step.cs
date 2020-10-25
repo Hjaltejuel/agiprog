@@ -23,9 +23,7 @@ namespace agiprog.Data
 
         public String? Img { get; set; }
 
-        public int? RoadmapId{ get; set;}
-
-        public Roadmap Roadmap { get; set; }
+        public List<RoadmapStep> RoadmapSteps { get; set; }
 
     }
 }

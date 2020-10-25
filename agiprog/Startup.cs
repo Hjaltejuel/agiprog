@@ -32,6 +32,7 @@ namespace agiprog
             services.AddScoped<MeetingService>();
             services.AddScoped<StepService>();
             services.AddScoped<RoadmapService>();
+            services.AddScoped<RoadmapStepService>();
             services.AddBlazoredToast();
         }
 

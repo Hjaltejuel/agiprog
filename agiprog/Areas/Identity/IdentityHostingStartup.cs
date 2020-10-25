@@ -23,6 +23,8 @@ namespace agiprog.Areas.Identity
                 services.AddDefaultIdentity<agiprogUser>(options => options.SignIn.RequireConfirmedAccount = true)
                     .AddEntityFrameworkStores<agiprogContext>();
             });
+
+
         }
     }
 }

@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using agiprog.Data;
 
 namespace agiprog.Migrations
 {
     [DbContext(typeof(agiprogContext))]
-    partial class agiprogContextModelSnapshot : ModelSnapshot
+    [Migration("20201024232358_ten")]
+    partial class ten
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -226,7 +228,7 @@ namespace agiprog.Migrations
                         .IsRequired()
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.Property<int>("RoadmapId")
+                    b.Property<int?>("RoadmapId")
                         .HasColumnType("int");
 
                     b.HasKey("MeetingId");
@@ -353,9 +355,7 @@ namespace agiprog.Migrations
                 {
                     b.HasOne("agiprog.Data.Roadmap", "Roadmap")
                         .WithMany("Meetings")
-                        .HasForeignKey("RoadmapId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("RoadmapId");
                 });
 
             modelBuilder.Entity("agiprog.Data.RoadmapStep", b =>

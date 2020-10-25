@@ -53,7 +53,7 @@
     <div class="row md-5">
         <div class="col-md-5">
             <div class="form-group align-items-center">
-                <img class="mr-3" src="@imageDataUrl">
+                <img style="max-width:100%" class="mr-3" src="@imageDataUrl">
             </div>
         </div>
     </div>
@@ -184,12 +184,13 @@
             // If the allowed extensions // fixed issue where uploading
             if (AllowedExtensions.Contains(fileInfo.Extension.ToLower()))
             {
-                var resizedImageFile = await file.ToImageFileAsync(format,
-               1000, 1000);
-                var buffer = new byte[resizedImageFile.Size];
-                await resizedImageFile.Data.ReadAsync(buffer);
+                var ms = new MemoryStream();
+                await file.Data.CopyToAsync(ms);
+                string imageBase64Data = Convert.ToBase64String(ms.ToArray());
                 var imageDataUrl =
-                    $"data:{format};base64,{Convert.ToBase64String(buffer)}";
+                          $"data:{format};base64,{imageBase64Data}";
+
+
 
                 this.imageDataUrl = imageDataUrl;
 

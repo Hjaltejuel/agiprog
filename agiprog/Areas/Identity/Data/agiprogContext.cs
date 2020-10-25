@@ -15,6 +15,8 @@ namespace agiprog.Data
         public DbSet<Meeting> meetings { get; set; }
         public DbSet<Roadmap> roadmaps { get; set; }
         public DbSet<Step> steps { get; set; }
+
+        public DbSet<RoadmapStep> RoadmapSteps { get; set; }
         public agiprogContext(DbContextOptions<agiprogContext> options)
             : base(options)
         {
@@ -23,9 +25,16 @@ namespace agiprog.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            // Customize the ASP.NET Identity model and override the defaults if needed.
-            // For example, you can rename the ASP.NET Identity table names and more.
-            // Add your customizations after calling base.OnModelCreating(builder);
+            builder.Entity<RoadmapStep>()
+                .HasKey(bc => new { bc.RoadmapId, bc.StepId });
+            builder.Entity<RoadmapStep>()
+                .HasOne(bc => bc.Roadmap)
+                .WithMany(b => b.RoadmapSteps)
+                .HasForeignKey(bc => bc.RoadmapId);
+            builder.Entity<RoadmapStep>()
+                .HasOne(bc => bc.Step)
+                .WithMany(c => c.RoadmapSteps)
+                .HasForeignKey(bc => bc.StepId);
         }
     }
 }

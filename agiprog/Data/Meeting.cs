@@ -15,7 +15,9 @@ namespace agiprog.Data
         [Required]
         public String Name { get; set; }
 
-        public Roadmap RoadMap { get; set; }
+        public int? RoadmapId { get; set; }
+
+        public Roadmap Roadmap { get; set; }
 
         public int CompletedSteps { get; set; }
 

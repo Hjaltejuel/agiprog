@@ -20,9 +20,9 @@ namespace agiprog.Data
         [Required]
         public String Description { get; set; }
  
-        public List<Step> Steps { get; set; }
+        public List<RoadmapStep> RoadmapSteps { get; set; }
 
-        public String? MeetingId { get; set; }
-        public Meeting Meeting { get; set; }
+
+        public List<Meeting> Meetings { get; set; }
     }
 }

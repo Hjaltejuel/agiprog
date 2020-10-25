@@ -15,22 +15,37 @@
 </section>
 
 <div class="form__group field">
-    <input @bind="meeting" @onkeypress="onKeyPress" disabled="@IsDisabled" type="input" class="form__field" placeholder="@placeholder" name="name" id='name' required />
+    <input @bind="meeting"  @onkeyup="onKeyPress" disabled="@IsDisabled" type="input" class="form__field" placeholder="@placeholder" name="name" id='name' required />
     <label for="name" class="form__label">Meeting ID</label>
 </div>
+<div style="max-height:500px; margin-top:1.5em;">
+    <AuthorizeView>
+        <Authorized>
+            <ul>
+                @foreach (var meet in meetingService.FindAllMeetings())
+                {
+                    <li><h5>Meeting ID : @meet.MeetingId </h5></li>
+                }
 
+            </ul>
+        </Authorized>
+    </AuthorizeView>
+</div>
 @code {
     private String meeting;
     private bool IsDisabled { get; set; }
     private String placeholder = "asdfasdfsa";
-    private void HandleValidSubmit()
+
+
+    private void onChang(ChangeEventArgs args)
     {
 
     }
 
     private async void onKeyPress(KeyboardEventArgs args)
     {
-
+        StateHasChanged();
+  
         if (args.Key == "Enter")
         {
             IsDisabled = true;
@@ -43,7 +58,7 @@
             else
             {
                 NavigationManager.NavigateTo("/meeting/" + result.MeetingId);
-          }
+            }
 
         }
         IsDisabled = false;

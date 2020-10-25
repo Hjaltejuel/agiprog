@@ -10,7 +10,7 @@
 @attribute [Authorize]
 @using agiprog.Data
 
-<h1>Create Roadmaps</h1>
+<h1>Create Meetings</h1>
 
 <hr id="eight" />
 
@@ -31,7 +31,7 @@
         </div>
         <div class="col-md-5">
             <div class="form-group align-items-center">
-                <label class="font-weight-bold" for="selecter">Select the steps for this roadmap</label>
+                <label class="font-weight-bold" for="selecter">Select the roadmap for this meeting</label>
                 <select class="selectpicker" id="selecter" multiple>
                     @foreach (var step in roadmaps)
                     {
@@ -47,24 +47,24 @@
     <button class="btn btn-primary" type="submit">Submit</button>
 </EditForm>
 
-<h1>Created steps</h1>
+<h1>Created meetings</h1>
 
 <div style="max-height:500px; overflow:@overflow" class="list-group">
     @foreach (var s in meetings)
     {
-        <div @onclick="() => select(s.MeetingId)" class="list-group-item list-group-item-action flex-column align-items-start @(ActiveMessageId == null ? "" : ActiveMessageId.Equals(s.MeetingId) ? "active" : "")">
-            <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1 text-black-50">Name : @s.Name</h5>
-                <div>
-                    <button class="btn btn-danger" @onclick="() => delete(s)">Delete</button>
-                    <button type="button" @onclick="() => setModal(s)" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
-                        Launch view
-                    </button>
-                </div>
+    <div @onclick="() => select(s.MeetingId)" class="list-group-item list-group-item-action flex-column align-items-start @(ActiveMessageId == null ? "" : ActiveMessageId.Equals(s.MeetingId) ? "active" : "")">
+        <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1 text-black-50">Name : @s.Name</h5>
+            <div>
+                <button class="btn btn-danger" @onclick="() => delete(s)">Delete</button>
+                <button type="button" @onclick="() => setModal(s)" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+                    Launch view
+                </button>
             </div>
-            <p class="mb-1 text-black-50">Description : @s.RoadMap.Name</p>
-
         </div>
+        <p class="mb-1 text-black-50">Description : @(s.Roadmap == null ? "Roadmap is null" : s.Roadmap.Name)</p>
+        <small>Meeting id : @(s.MeetingId)</small>
+    </div>
     }
 </div>
 
@@ -87,16 +87,16 @@
                 </div>
 
                 <div style="max-height:500px; overflow:scroll" class="list-group">
-                    @if (Modal.RoadMap != null)
+                    @if (Modal.Roadmap != null)
                     {
-                        <div @onclick="() => subSelect(Modal.RoadMap.RoadmapID)" class="list-group-item list-group-item-action flex-column align-items-start @(SubActiveMessageId == Modal.RoadMap.RoadmapID ? "active" : "")">
-                            <div class="d-flex w-100 justify-content-between">
-                                <h5 class="mb-1 text-black-50">Name : @Modal.RoadMap.Name</h5>
-                        
-                            </div>
-                            <p class="mb-1 text-black-50">Description : @Modal.RoadMap.Description</p>
-                        
+                    <div @onclick="() => subSelect(Modal.Roadmap.RoadmapID)" class="list-group-item list-group-item-action flex-column align-items-start @(SubActiveMessageId == Modal.Roadmap.RoadmapID ? "active" : "")">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1 text-black-50">Name : @Modal.Roadmap.Name</h5>
+
                         </div>
+                        <p class="mb-1 text-black-50">Description : @Modal.Roadmap.Description</p>
+                        <img style="max-width:100%" class="mr-3" src="@Modal.Roadmap.Image">
+                    </div>
                         
                     }
                 </div>
@@ -135,6 +135,7 @@
 
     protected override void OnInitialized()
     {
+        ActiveMessageId = "";
         meetings = meetingService.FindAllMeetings();
         if (meetings != null && meetings.Count != 0)
         {
@@ -163,7 +164,7 @@
         }
         else
         {
-            meeting.RoadMap = roadmaps[SelectedValue];
+            meeting.Roadmap = roadmaps[SelectedValue];
             meetings.Add(meeting);
             await meetingService.AddMeeting(meeting);
             toastService.ShowSuccess("Meeting saved");
