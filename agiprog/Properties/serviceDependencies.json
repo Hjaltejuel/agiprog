@@ -3,6 +3,10 @@
     "mssql1": {
       "type": "mssql",
       "connectionId": "agiprogContextConnection"
+    },
+    "signalr1": {
+      "type": "signalr",
+      "connectionId": "Azure__SignalR__ConnectionString"
     }
   }
 }
