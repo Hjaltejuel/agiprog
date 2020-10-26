@@ -20,9 +20,9 @@ namespace agiprog.Data
         [Required]
         public String Description { get; set; }
  
-        public List<RoadmapStep> RoadmapSteps { get; set; }
+        public virtual List<RoadmapStep> RoadmapSteps { get; set; }
 
 
-        public List<Meeting> Meetings { get; set; }
+        public virtual List<Meeting> Meetings { get; set; }
     }
 }

@@ -15,22 +15,59 @@
 </section>
 
 <div class="form__group field">
-    <input @bind="meeting"  @onkeyup="onKeyPress" disabled="@IsDisabled" type="input" class="form__field" placeholder="@placeholder" name="name" id='name' required />
+    <input @bind="meeting" @onkeyup="onKeyPress" disabled="@IsDisabled" type="input" class="form__field" placeholder="@placeholder" name="name" id='name' required />
     <label for="name" class="form__label">Meeting ID</label>
 </div>
 <div style="max-height:500px; margin-top:1.5em;">
     <AuthorizeView>
         <Authorized>
-            <ul>
-                @foreach (var meet in meetingService.FindAllMeetings())
-                {
-                    <li><h5>Meeting ID : @meet.MeetingId </h5></li>
-                }
-
-            </ul>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+                Launch Existing meetings
+            </button>
         </Authorized>
     </AuthorizeView>
 </div>
+
+
+<div  class="modal fade" id="exampleModalCenter"  tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered" style="" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-black-50" id="exampleModalLongTitle">Existing meetings</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <ul>
+                    @foreach (var meet in meetingService.FindAllMeetings())
+                    {
+
+                    <li>
+                        <hr style="margin:1.2em; background-color:black" />
+                        <div>
+                            Meeting name : @meet.Name
+                        </div>
+                        <div>
+                            Meeting ID : @meet.MeetingId
+                        </div>
+                        <div>
+                            Link : <a onclick="$('#exampleModalCenter').modal('hide')" class="text-black-50" href="/meeting/@meet.MeetingId">Go to meeting</a>
+                        </div>
+             
+                    </li>
+                    }
+
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 @code {
     private String meeting;
     private bool IsDisabled { get; set; }
@@ -45,7 +82,7 @@
     private async void onKeyPress(KeyboardEventArgs args)
     {
         StateHasChanged();
-  
+
         if (args.Key == "Enter")
         {
             IsDisabled = true;

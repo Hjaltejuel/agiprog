@@ -18,7 +18,7 @@ namespace agiprog.Areas.Identity
             builder.ConfigureServices((context, services) => {
                 services.AddDbContextPool<agiprogContext>(options =>
                     options.UseMySql(
-                        context.Configuration.GetConnectionString("agiprogContextConnection")));
+                        context.Configuration.GetConnectionString("agiprogContextConnection")).UseLazyLoadingProxies());
 
                 services.AddDefaultIdentity<agiprogUser>(options => options.SignIn.RequireConfirmedAccount = true)
                     .AddEntityFrameworkStores<agiprogContext>();

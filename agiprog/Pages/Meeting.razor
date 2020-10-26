@@ -1,76 +1,111 @@
 ﻿@page "/meeting/{MeetingId}"
-@inject agiprog.Data.MeetingService meetingService
+@using agiprog.Data
+@inject MeetingService meetingService
+@inject RoadmapService roadmapService
 @inject NavigationManager NavigationManager
-    <section>
-        <div class="wrapper">
-            <h1 class="alpha lato thin thick-header-line uppercase ls-small">
-                Welcome to your progress board : @(meeting?.Roadmap?.Name)
-            </h1>
-        </div>
-    </section>
+<div>
+    <h1 style="width:100%" class="text-xl-center">
+        Welcome to your progress board : @(meeting?.Roadmap?.Name)
+    </h1>
+</div>
+<div>
+    <h5 style="width:100%" class="text-md-center">
+        @(meeting?.Roadmap?.Description)
+    </h5>
+</div>
+
+
+@if (meeting?.Roadmap?.RoadmapSteps != null)
+{
     <ul class="tilesWrap">
-        <li>
-            <h2>01</h2>
-            <h3>Title 1</h3>
+
+        @{var i = 1; }
+        @foreach (var step in meeting.Roadmap.RoadmapSteps.Select(s => s.Step))
+        {
+        <li class="@(i <= meeting.CompletedSteps ? "completed" : "")">
+            <h2>@(i < 10 ? "0" + i : "" + i)</h2>
+            <h3>@step.Name</h3>
             <p>
-                Lorem Ipsum is simply dummy text of the printing and typesetting
-                industry. Lorem Ipsum has been the industry's standard dummy text ever
-                since the 1500s.
+                @step.Description
             </p>
-            <button>Read more</button>
+            <img style="max-width:100%" class="mr-3" src="@step.Img">
+            <div>
+
+
+                <button style=" float: right;" type="button" @onclick="() => setModal(step)" data-toggle="modal" data-target="#exampleModalCenter">
+                    View
+                </button>
+                @if (i - 1 == meeting.CompletedSteps)
+                {
+                    <AuthorizeView>
+                        <Authorized>
+                            <button style=" float: right;" @onclick="(async () => await complete())">Complete</button>
+                        </Authorized>
+                    </AuthorizeView>
+                }
+            </div>
         </li>
-        <li>
-            <h2>02</h2>
-            <h3>Title 2</h3>
-            <p>
-                When an unknown printer took a galley of type and scrambled it to make
-                a type specimen book. It has survived not only five centuries.
-            </p>
-            <button>Read more</button>
-        </li>
-        <li>
-            <h2>03</h2>
-            <h3>Title 3</h3>
-            <p>
-                But also the leap into electronic typesetting, remaining essentially
-                unchanged. It was popularised in the 1960s.
-            </p>
-            <button>Read more</button>
-        </li>
-        <li>
-            <h2>04</h2>
-            <h3>Title 4</h3>
-            <p>
-                With the release of Letraset sheets containing Lorem Ipsum passages,
-                and more recently with desktop publishing software like Aldus PageMaker
-                including versions of Lorem Ipsum.
-            </p>
-            <button>Read more</button>
-        </li>
-        <li>
-            <h2>05</h2>
-            <h3>Title 5</h3>
-            <p>
-                With the release of Letraset sheets containing Lorem Ipsum passages,
-                and more recently with desktop publishing software like Aldus PageMaker
-                including versions of Lorem Ipsum.
-            </p>
-            <button>Read more</button>
-        </li>
+            i++;
+        }
+
     </ul>
+}
+else
+{
+    <div>
+        loading...
+    </div>
+}
+
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered" style="" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-black-50" id="exampleModalLongTitle">@Modal.Name</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Description : @Modal.Description
+                <img style="max-width:100%" class="mr-3" src="@Modal.Img">
+                <iframe width="100%" src="@Modal.VideoUrl"></iframe>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 @code {
     [Parameter]
     public String MeetingId { get; set; }
 
+    private Step Modal = new Step();
+
     public agiprog.Data.Meeting meeting { get; set; }
+
+    private void setModal(Step step)
+    {
+        this.Modal = step;
+
+    }
+
+    private async Task complete()
+    {
+        meeting.CompletedSteps = meeting.CompletedSteps + 1;
+        await meetingService.UpdateMeeting(meeting);
+        StateHasChanged();
+    }
 
     protected async override Task OnInitializedAsync()
     {
-       var result = await meetingService.FindMeeting(MeetingId);
-       if (result == null)
-           NavigationManager.NavigateTo("/");
-       meeting = result;
+        var result = await meetingService.FindMeeting(MeetingId);
+        if (result == null)
+            NavigationManager.NavigateTo("/");
+        meeting = result;
         StateHasChanged();
-       
+
+
     }
 }

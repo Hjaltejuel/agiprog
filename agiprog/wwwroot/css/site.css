@@ -29,6 +29,9 @@ html {
   border: 1px solid #252727;
   text-align: left; }
 
+.tilesWrap li.completed {
+  background: #3d752a; }
+
 .tilesWrap li h2 {
   font-size: 114px;
   margin: 0;
@@ -130,41 +133,6 @@ html {
   background: -webkit-linear-gradient(to right, #0ABFBC, #FC354C);
   background: linear-gradient(to right, #0ABFBC, #FC354C); }
 
-.tilesWrap li:nth-child(5):before {
-    background: #f2709c;
-    background: -webkit-linear-gradient(to right, #ff9472, #f2709c);
-    background: linear-gradient(to right, #ff9472, #f2709c);
-}
-
-.tilesWrap li:nth-child(6):before {
-    background: #C9FFBF;
-    background: -webkit-linear-gradient(to right, #FFAFBD, #C9FFBF);
-    background: linear-gradient(to right, #FFAFBD, #C9FFBF);
-}
-
-.tilesWrap li:nth-child(7):before {
-    background: #f2709c;
-    background: -webkit-linear-gradient(to right, #ff9472, #f2709c);
-    background: linear-gradient(to right, #ff9472, #f2709c);
-}
-
-.tilesWrap li:nth-child(8):before {
-    background: #c21500;
-    background: -webkit-linear-gradient(to right, #ffc500, #c21500);
-    background: linear-gradient(to right, #ffc500, #c21500);
-}
-
-.tilesWrap li:nth-child(9):before {
-    background: #FC354C;
-    background: -webkit-linear-gradient(to right, #0ABFBC, #FC354C);
-    background: linear-gradient(to right, #0ABFBC, #FC354C);
-}
-
-.tilesWrap li:nth-child(10):before {
-    background: #f2709c;
-    background: -webkit-linear-gradient(to right, #ff9472, #f2709c);
-    background: linear-gradient(to right, #ff9472, #f2709c);
-}
 hr {
   height: 1px;
   background: white;

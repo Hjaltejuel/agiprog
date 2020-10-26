@@ -23,7 +23,7 @@ namespace agiprog.Data
 
         public String? Img { get; set; }
 
-        public List<RoadmapStep> RoadmapSteps { get; set; }
+        public virtual List<RoadmapStep> RoadmapSteps { get; set; }
 
     }
 }

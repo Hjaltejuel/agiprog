@@ -9,11 +9,11 @@ namespace agiprog.Data
     {
         public int RoadmapId { get; set; }
 
-        public Roadmap Roadmap { get; set; }
+        public virtual Roadmap Roadmap { get; set; }
 
         public int StepId { get; set; }
 
-        public Step Step { get; set; }
+        public virtual Step Step { get; set; }
 
     }
 }
