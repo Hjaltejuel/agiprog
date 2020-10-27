@@ -1,0 +1,36 @@
+<svg width="1024" height="1024" xmlns="http://www.w3.org/2000/svg">
+
+ <g>
+  <title>background</title>
+  <rect fill="none" id="canvas_background" height="514" width="1026" y="-1" x="-1"/>
+ </g>
+ <g>
+  <title>Layer 1</title>
+  <g stroke="null" id="svg_1">
+   <g stroke="null" id="svg_2">
+    <path stroke="null" id="svg_3" d="m666.97862,25.333l-548.95727,0c-62.32392,0 -113.02133,33.494 -113.02133,74.667l0,213.333c0,41.174 50.69741,74.667 113.02133,74.667l73.04374,0l-55.73491,92.032c-2.64741,4.395 -0.61304,9.429 5.0375,12.352c2.93804,1.515 6.45884,2.283 9.97812,2.283c3.29375,0 6.5875,-0.661 9.33179,-1.984l221.84373,-104.683l285.45881,0c62.32241,0 113.01981,-33.493 113.01981,-74.667l0,-213.333c0,-41.173 -50.69741,-74.667 -113.02133,-74.667zm80.76196,288.022c0,29.397 -36.23125,53.333 -80.72865,53.333l-290.62497,0c-3.35884,0 -6.68437,0.683 -9.39687,1.984l-181.18802,85.504l44.10991,-72.875c2.00259,-3.285 1.38804,-7.019 -1.61509,-9.941c-3.00312,-2.923 -8.00884,-4.693 -13.36875,-4.693l-96.87499,0c-44.49741,0 -80.72865,-23.936 -80.72865,-53.333l0,-213.334c0,-29.397 36.23125,-53.333 80.72865,-53.333l0,0.021l548.95878,0c44.49741,0 80.72865,23.936 80.72865,53.333l0,213.334z"/>
+   </g>
+  </g>
+  <g id="svg_4"/>
+  <g id="svg_5"/>
+  <g id="svg_6"/>
+  <g id="svg_7"/>
+  <g id="svg_8"/>
+  <g id="svg_9"/>
+  <g id="svg_10"/>
+  <g id="svg_11"/>
+  <g id="svg_12"/>
+  <g id="svg_13"/>
+  <g id="svg_14"/>
+  <g id="svg_15"/>
+  <g id="svg_16"/>
+  <g id="svg_17"/>
+  <g id="svg_18"/>
+  <text xml:space="preserve" text-anchor="start" font-family="'League Gothic', sans-serif" font-size="36" id="svg_19" y="104.45313" x="66.5" stroke-width="0" stroke="#000" fill="#000000">Hello There!!!!</text>
+  <text xml:space="preserve" text-anchor="start" font-family="'League Gothic', sans-serif" font-size="36" id="svg_20" y="165.45313" x="67.5" stroke-width="0" stroke="#000" fill="#000000">I am the agile ghost, today you will learn</text>
+  <text xml:space="preserve" text-anchor="start" font-family="'League Gothic', sans-serif" font-size="36" id="svg_22" y="205.45313" x="65.5" stroke-width="0" stroke="#000" fill="#000000">a lot about the agile method!</text>
+  <text xml:space="preserve" text-anchor="start" font-family="'League Gothic', sans-serif" font-size="36" id="svg_24" y="259.45313" x="62.5" stroke-width="0" stroke="#000" fill="#000000">Insert your meeting ID and press enter</text>
+  <text stroke="#000" transform="matrix(1,0,0,0.9302579164505005,0,17.481289129704237) " xml:space="preserve" text-anchor="start" font-family="'League Gothic', sans-serif" font-size="36" id="svg_25" y="284.45313" x="76.5" stroke-width="0" fill="#000000"/>
+  <text xml:space="preserve" text-anchor="start" font-family="'League Gothic', sans-serif" font-size="36" id="svg_26" y="297.45313" x="60.5" fill-opacity="null" stroke-opacity="null" stroke-width="0" stroke="#000" fill="#000000">to begin</text>
+ </g>
+</svg>

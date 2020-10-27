@@ -8,6 +8,70 @@ html {
 *, *:before, *:after {
   box-sizing: inherit; }
 
+p.bubble {
+  position: relative;
+  width: 300px;
+  text-align: center;
+  line-height: 1.4em;
+  margin: 40px auto;
+  background-color: #fff;
+  border: 8px solid #333;
+  border-radius: 30px;
+  font-family: sans-serif;
+  padding: 20px;
+  font-size: large; }
+
+p.fadein {
+  animation: fadein7 10s ease-in-out 1 forwards; }
+
+p.fadeinfast {
+  animation: fadeinfast 4s ease-in-out 1 forwards; }
+
+p.thought {
+  width: 300px;
+  border-radius: 200px;
+  padding: 30px; }
+
+p.bubble:before,
+p.bubble:after {
+  content: ' ';
+  position: absolute;
+  width: 0;
+  height: 0; }
+
+p.speech:before {
+  left: 30px;
+  bottom: -50px;
+  border: 25px solid;
+  border-color: #333 transparent transparent #333; }
+
+p.speech:after {
+  left: 38px;
+  bottom: -30px;
+  border: 15px solid;
+  border-color: #fff transparent transparent #fff; }
+
+p.thought:before,
+p.thought:after {
+  left: 10px;
+  bottom: -30px;
+  width: 40px;
+  height: 40px;
+  background-color: #fff;
+  border: 8px solid #333;
+  -webkit-border-radius: 28px;
+  -moz-border-radius: 28px;
+  border-radius: 28px; }
+
+p.thought:after {
+  width: 20px;
+  height: 20px;
+  left: 5px;
+  bottom: -40px;
+  -webkit-border-radius: 18px;
+  -moz-border-radius: 18px;
+  border-radius: 18px; }
+
 .bouncetext:hover {
   animation: bounce 2.5s ease-in-out infinite;
   -webkit-animation: bounce ease-in-out 2.5s infinite;
@@ -39,7 +103,7 @@ html {
     transform: translateY(-10px); } }
 
 .ghost {
-  animation: float 3s ease-in-out infinite alternate, move 15s ease-in-out 1 alternate;
+  animation: float 3s ease-in-out infinite alternate, move 7.5s ease-in-out 1 forwards;
   margin-left: 0%; }
 
 .ghoststa {
@@ -61,10 +125,24 @@ html {
     transform-origin: center center; }
 
 .shadowghost {
-  animation: shrink 3s ease-in-out infinite alternate, move 15s ease-in-out 1 alternate;
+  animation: shrink 3s ease-in-out infinite alternate, move 7.5s ease-in-out 1 alternate forwards;
   transform-origin: center center; }
   .shadowghost ellipse {
     transform-origin: center center; }
+
+@keyframes fadein7 {
+  0% {
+    opacity: 0; }
+  75% {
+    opacity: 0; }
+  100% {
+    opacity: 1; } }
+
+@keyframes fadeinfast {
+  0% {
+    opacity: 0; }
+  100% {
+    opacity: 1; } }
 
 @keyframes shrink {
   0% {
@@ -78,12 +156,9 @@ html {
   0% {
     margin-left: 0%;
     opacity: 1; }
-  50% {
-    margin-left: 100%;
-    opacity: 0.5; }
   100% {
-    margin-left: 0%;
-    opacity: 1; } }
+    margin-left: 100%;
+    opacity: 0.5; } }
 
 .tilesWrap {
   padding: 0;
