@@ -15,7 +15,7 @@
 </section>
 
 <div class="container">
-    <p style="margin-left:105%" class="bubble fadein speech text-black-50">Hello There!!! I am the agile ghost, and will help you on your journey. Enter meeting ID and press enter to begin</p>
+    <p style="margin-left:95%;" class="@(fadeaway == false ? "fadein" : "fadeoutfast" )  bubble speech text-black-50">Hello There!!! I am the agile ghost, and will help you on your journey. Enter meeting ID and press enter to begin <button class="btn btn-primary @(fadeaway == false ? "" : "fadeoutfast" )" @onclick="cfadeaway">hide</button></p>
     <svg class="ghost" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
          width="127.433px" height="132.743px" viewBox="0 0 127.433 132.743" enable-background="new 0 0 127.433 132.743"
          xml:space="preserve">
@@ -146,11 +146,22 @@
     private String meeting;
     private bool IsDisabled { get; set; }
     private String placeholder = "asdfasdfsa";
+    private bool fadeaway { get; set; }
 
+    protected override void OnInitialized()
+    {
+        fadeaway = false;
+
+    }
 
     private void onChang(ChangeEventArgs args)
     {
 
+    }
+
+    private void cfadeaway()
+    {
+        fadeaway = true; 
     }
 
     private async void onKeyPress(KeyboardEventArgs args)

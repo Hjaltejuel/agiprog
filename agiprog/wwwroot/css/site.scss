@@ -28,6 +28,20 @@ p.bubble {
     font-size: large;
 }
 
+div.fadeinfast {
+    animation: fadeinfast 4s ease-in-out 1 forwards;
+}
+
+p.fadeoutfast {
+    animation: fadeoutfast 4s ease-in-out 1 forwards !important;
+}
+div.fadeoutfast {
+    animation: fadeoutfast 4s ease-in-out 1 forwards !important;
+}
+button.fadeoutfast {
+    animation: fadeoutfast 4s ease-in-out 1 forwards !important;
+}
+
 p.fadein {
     animation: fadein7 10s ease-in-out 1 forwards;
 }
@@ -190,7 +204,15 @@ p.thought:after {
         opacity: 1;
     }
 }
+@keyframes fadeoutfast {
+    0% {
+        opacity: 1;
+    }
 
+    100% {
+        opacity: 0;
+    }
+}
 @keyframes shrink {
     0% {
         width: 90%;
@@ -219,7 +241,7 @@ p.thought:after {
   
 
     100% {
-        margin-left: 100%;
+        margin-left: 90%;
         opacity: 0.5;
     }
 }
@@ -853,9 +875,7 @@ p {
 
 /* ==== General styles ==== */
 section {
-    height: 600px;
-    padding: 3rem 0;
-    position: relative;
+    height:20em !important;
 }
 
 .wrapper {
