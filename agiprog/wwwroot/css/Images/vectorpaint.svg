@@ -1,0 +1,11 @@
+<svg  xmlns="http://www.w3.org/2000/svg">
+  <svg preserveAspectRatio="none"  xmlns="http://www.w3.org/2000/svg">
+    <circle cx="50%" cy="31px" r="30px" stroke="black" stroke-width="3" fill="black" />
+  </svg>
+  <svg preserveAspectRatio="none"  viewBox="0 0 100 100"  xmlns="http://www.w3.org/2000/svg">
+    <rect x="49.75" y="0" width="0.3" height="90" />
+  </svg>
+  <svg  preserveAspectRatio="none"  xmlns="http://www.w3.org/2000/svg">
+    <circle cx="50%" cy="90%" r="30px" stroke="black" stroke-width="3" fill="black" />
+  </svg>
+</svg>

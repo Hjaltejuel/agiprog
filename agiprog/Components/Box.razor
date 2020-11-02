@@ -1,0 +1,48 @@
+﻿@using System.Globalization
+@using agiprog.Data
+@inject StepService stepService
+@if (step != null)
+{
+<div class="textbooble hiddenbutton"
+     style="resize:both;">
+    <h1> @step.Name</h1>
+    <p>@step.Description</p>
+    <button type="button" @onclick="@(() => OnClick.InvokeAsync(step))" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+        Launch Existing meetings
+    </button>
+</div>
+}
+else
+{
+    <p>...Loading</p>
+}
+
+
+@code{
+
+    [Parameter]
+    public int stepId { get; set; }
+
+    [Parameter]
+    public EventCallback<Step> OnClick { get; set; }
+
+    public Step step { get; set; }
+
+
+    protected async override Task OnParametersSetAsync()
+    {
+        step = await stepService.FindStep(stepId);
+
+        base.StateHasChanged();
+
+
+    }
+
+    public void onclick()
+    {
+
+        base.StateHasChanged();
+
+    }
+
+}
