@@ -23,7 +23,7 @@
         <div class="col-md-5">
 
             <div class="form-group align-items-center">
-                <label class="font-weight-bold" for="name">Name of the step</label>
+                <label class="font-weight-bold" for="name">Name of the roadmap</label>
                 <InputText type="text" class="form-control" id="name" aria-describedby="emailHelp" @bind-Value="roadmap.Name" placeholder="Enter name" />
                 <small id="emailHelp" class="form-text text-muted">A good name equals a good start.</small>
             </div>
@@ -31,7 +31,7 @@
         </div>
         <div class="col-md-5">
             <div class="form-group align-items-center">
-                <label class="font-weight-bold" for="description">Description of the step</label>
+                <label class="font-weight-bold" for="description">Description of the roadmap</label>
                 <InputTextArea type="text" class="form-control" id="description" aria-describedby="descHelp" @bind-Value="roadmap.Description" placeholder="Enter Description" />
                 <small id="descHelp" class="form-text text-muted">A description can never be too small</small>
             </div>
@@ -42,7 +42,7 @@
     <div class="row md-5">
         <div class="col-md-5">
             <div class="form-group align-items-center">
-                <label class="font-weight-bold" for="image">An image representing the step</label>
+                <label class="font-weight-bold" for="image">An image representing the roadmap</label>
                 <InputFile type="file" class="form-control-file" id="image" OnChange="@(async (files) => await HandleFileSelected(files))" placeholder="Please choose an image" />
             </div>
         </div>
@@ -72,7 +72,7 @@
     <button class="btn btn-primary" type="submit">Submit</button>
 </EditForm>
 
-<h1>Created steps</h1>
+<h1>Created roadmaps</h1>
 
 <div style="max-height:500px; overflow:@overflow" class="list-group">
     @foreach (var s in roadmaps)
