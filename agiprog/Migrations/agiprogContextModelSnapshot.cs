@@ -226,14 +226,57 @@ namespace agiprog.Migrations
                         .IsRequired()
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.Property<int>("RoadmapId")
+                    b.Property<int?>("RoadmapId")
                         .HasColumnType("int");
 
                     b.HasKey("MeetingId");
 
                     b.HasIndex("RoadmapId");
 
-                    b.ToTable("meetings");
+                    b.ToTable("Meetings");
+                });
+
+            modelBuilder.Entity("agiprog.Data.Message", b =>
+                {
+                    b.Property<string>("MeetingId")
+                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                    b.Property<int>("StepId")
+                        .HasColumnType("int");
+
+                    b.HasKey("MeetingId", "StepId");
+
+                    b.HasIndex("StepId");
+
+                    b.ToTable("Messages");
+                });
+
+            modelBuilder.Entity("agiprog.Data.MessageBody", b =>
+                {
+                    b.Property<int>("MessageBodyId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("At")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Chat")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<string>("MessageMeetingId")
+                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                    b.Property<int?>("MessageStepId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("User")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.HasKey("MessageBodyId");
+
+                    b.HasIndex("MessageMeetingId", "MessageStepId");
+
+                    b.ToTable("MessageBodies");
                 });
 
             modelBuilder.Entity("agiprog.Data.Roadmap", b =>
@@ -255,7 +298,7 @@ namespace agiprog.Migrations
 
                     b.HasKey("RoadmapID");
 
-                    b.ToTable("roadmaps");
+                    b.ToTable("Roadmaps");
                 });
 
             modelBuilder.Entity("agiprog.Data.RoadmapStep", b =>
@@ -295,7 +338,25 @@ namespace agiprog.Migrations
 
                     b.HasKey("StepId");
 
-                    b.ToTable("steps");
+                    b.ToTable("Steps");
+                });
+
+            modelBuilder.Entity("agiprog.Data.StepDate", b =>
+                {
+                    b.Property<string>("MeetingId")
+                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                    b.Property<int>("StepId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("MeetingId", "StepId");
+
+                    b.HasIndex("StepId");
+
+                    b.ToTable("StepDates");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -353,9 +414,30 @@ namespace agiprog.Migrations
                 {
                     b.HasOne("agiprog.Data.Roadmap", "Roadmap")
                         .WithMany("Meetings")
-                        .HasForeignKey("RoadmapId")
+                        .HasForeignKey("RoadmapId");
+                });
+
+            modelBuilder.Entity("agiprog.Data.Message", b =>
+                {
+                    b.HasOne("agiprog.Data.Meeting", "Meeting")
+                        .WithMany("Messages")
+                        .HasForeignKey("MeetingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("agiprog.Data.Step", "Step")
+                        .WithMany("Messages")
+                        .HasForeignKey("StepId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("agiprog.Data.MessageBody", b =>
+                {
+                    b.HasOne("agiprog.Data.Message", null)
+                        .WithMany("MessageBodies")
+                        .HasForeignKey("MessageMeetingId", "MessageStepId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("agiprog.Data.RoadmapStep", b =>
@@ -368,6 +450,21 @@ namespace agiprog.Migrations
 
                     b.HasOne("agiprog.Data.Step", "Step")
                         .WithMany("RoadmapSteps")
+                        .HasForeignKey("StepId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("agiprog.Data.StepDate", b =>
+                {
+                    b.HasOne("agiprog.Data.Meeting", "Meeting")
+                        .WithMany("StepDates")
+                        .HasForeignKey("MeetingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("agiprog.Data.Step", "Step")
+                        .WithMany("StepDates")
                         .HasForeignKey("StepId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

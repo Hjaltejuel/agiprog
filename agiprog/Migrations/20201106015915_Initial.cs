@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace agiprog.Migrations
 {
-    public partial class initial : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -45,6 +45,37 @@ namespace agiprog.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Roadmaps",
+                columns: table => new
+                {
+                    RoadmapID = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Name = table.Column<string>(nullable: false),
+                    Image = table.Column<string>(nullable: true),
+                    Description = table.Column<string>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Roadmaps", x => x.RoadmapID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Steps",
+                columns: table => new
+                {
+                    StepId = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Name = table.Column<string>(nullable: false),
+                    Description = table.Column<string>(nullable: false),
+                    VideoUrl = table.Column<string>(nullable: true),
+                    Img = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Steps", x => x.StepId);
                 });
 
             migrationBuilder.CreateTable(
@@ -153,6 +184,122 @@ namespace agiprog.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Meetings",
+                columns: table => new
+                {
+                    MeetingId = table.Column<string>(nullable: false),
+                    Name = table.Column<string>(nullable: false),
+                    RoadmapId = table.Column<int>(nullable: true),
+                    CompletedSteps = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Meetings", x => x.MeetingId);
+                    table.ForeignKey(
+                        name: "FK_Meetings_Roadmaps_RoadmapId",
+                        column: x => x.RoadmapId,
+                        principalTable: "Roadmaps",
+                        principalColumn: "RoadmapID",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RoadmapSteps",
+                columns: table => new
+                {
+                    RoadmapId = table.Column<int>(nullable: false),
+                    StepId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RoadmapSteps", x => new { x.RoadmapId, x.StepId });
+                    table.ForeignKey(
+                        name: "FK_RoadmapSteps_Roadmaps_RoadmapId",
+                        column: x => x.RoadmapId,
+                        principalTable: "Roadmaps",
+                        principalColumn: "RoadmapID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_RoadmapSteps_Steps_StepId",
+                        column: x => x.StepId,
+                        principalTable: "Steps",
+                        principalColumn: "StepId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Messages",
+                columns: table => new
+                {
+                    StepId = table.Column<int>(nullable: false),
+                    MeetingId = table.Column<string>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Messages", x => new { x.MeetingId, x.StepId });
+                    table.ForeignKey(
+                        name: "FK_Messages_Meetings_MeetingId",
+                        column: x => x.MeetingId,
+                        principalTable: "Meetings",
+                        principalColumn: "MeetingId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Messages_Steps_StepId",
+                        column: x => x.StepId,
+                        principalTable: "Steps",
+                        principalColumn: "StepId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "StepDates",
+                columns: table => new
+                {
+                    StepId = table.Column<int>(nullable: false),
+                    MeetingId = table.Column<string>(nullable: false),
+                    Date = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StepDates", x => new { x.MeetingId, x.StepId });
+                    table.ForeignKey(
+                        name: "FK_StepDates_Meetings_MeetingId",
+                        column: x => x.MeetingId,
+                        principalTable: "Meetings",
+                        principalColumn: "MeetingId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_StepDates_Steps_StepId",
+                        column: x => x.StepId,
+                        principalTable: "Steps",
+                        principalColumn: "StepId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MessageBodies",
+                columns: table => new
+                {
+                    MessageBodyId = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Chat = table.Column<string>(nullable: true),
+                    At = table.Column<DateTime>(nullable: false),
+                    User = table.Column<string>(nullable: true),
+                    MessageMeetingId = table.Column<string>(nullable: true),
+                    MessageStepId = table.Column<int>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MessageBodies", x => x.MessageBodyId);
+                    table.ForeignKey(
+                        name: "FK_MessageBodies_Messages_MessageMeetingId_MessageStepId",
+                        columns: x => new { x.MessageMeetingId, x.MessageStepId },
+                        principalTable: "Messages",
+                        principalColumns: new[] { "MeetingId", "StepId" },
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -189,6 +336,31 @@ namespace agiprog.Migrations
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Meetings_RoadmapId",
+                table: "Meetings",
+                column: "RoadmapId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MessageBodies_MessageMeetingId_MessageStepId",
+                table: "MessageBodies",
+                columns: new[] { "MessageMeetingId", "MessageStepId" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Messages_StepId",
+                table: "Messages",
+                column: "StepId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RoadmapSteps_StepId",
+                table: "RoadmapSteps",
+                column: "StepId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StepDates_StepId",
+                table: "StepDates",
+                column: "StepId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -209,10 +381,31 @@ namespace agiprog.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "MessageBodies");
+
+            migrationBuilder.DropTable(
+                name: "RoadmapSteps");
+
+            migrationBuilder.DropTable(
+                name: "StepDates");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Messages");
+
+            migrationBuilder.DropTable(
+                name: "Meetings");
+
+            migrationBuilder.DropTable(
+                name: "Steps");
+
+            migrationBuilder.DropTable(
+                name: "Roadmaps");
         }
     }
 }

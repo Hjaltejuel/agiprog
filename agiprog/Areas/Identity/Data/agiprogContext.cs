@@ -12,11 +12,17 @@ namespace agiprog.Data
     public class agiprogContext : IdentityDbContext<agiprogUser>
     {
 
-        public DbSet<Meeting> meetings { get; set; }
-        public DbSet<Roadmap> roadmaps { get; set; }
-        public DbSet<Step> steps { get; set; }
+        public DbSet<Meeting> Meetings { get; set; }
+        public DbSet<Roadmap> Roadmaps { get; set; }
+        public DbSet<Step> Steps { get; set; }
+
+        public DbSet<Message> Messages { get; set; }
 
         public DbSet<RoadmapStep> RoadmapSteps { get; set; }
+
+        public DbSet<StepDate> StepDates { get;set; }
+
+        public DbSet<MessageBody> MessageBodies { get; set; }
         public agiprogContext(DbContextOptions<agiprogContext> options)
             : base(options)
         
@@ -37,6 +43,30 @@ namespace agiprog.Data
                 .HasOne(bc => bc.Step)
                 .WithMany(c => c.RoadmapSteps)
                 .HasForeignKey(bc => bc.StepId);
+
+            builder.Entity<Message>()
+                .HasKey(bc => new { bc.MeetingId,  bc.StepId });
+            builder.Entity<Message>()
+                .HasOne(bc => bc.Meeting)
+                .WithMany(b => b.Messages)
+                .HasForeignKey(bc => bc.MeetingId);
+            builder.Entity<Message>()
+                .HasOne(bc => bc.Step)
+                .WithMany(c => c.Messages)
+                .HasForeignKey(bc => bc.StepId);
+
+            builder.Entity<StepDate>()
+                .HasKey(bc => new { bc.MeetingId,  bc.StepId });
+            builder.Entity<StepDate>()
+                .HasOne(bc => bc.Meeting)
+                .WithMany(b => b.StepDates)
+                .HasForeignKey(bc => bc.MeetingId);
+            builder.Entity<StepDate>()
+                .HasOne(bc => bc.Step)
+                .WithMany(c => c.StepDates)
+                .HasForeignKey(bc => bc.StepId);
+
+            builder.Entity<Message>().HasMany(bc => bc.MessageBodies).WithOne().OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

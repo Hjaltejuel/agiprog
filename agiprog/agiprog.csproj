@@ -17,11 +17,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Migrations\20201020133117_CreateIdentitySchema.cs" />
-    <Compile Remove="Migrations\20201020133117_CreateIdentitySchema.Designer.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Content Remove="compilerconfig.json" />
   </ItemGroup>
 

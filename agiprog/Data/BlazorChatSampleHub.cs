@@ -36,9 +36,9 @@ namespace agiprog.Data
         }
 
 
-        public async Task SendMessageToGroup(int step, String meeting, string username,  string message)
+        public async Task SendMessageToGroup(int step, String meeting, MessageBody message)
         {
-            await Clients.Group(step + meeting).SendAsync("RecieveMessage", username, message);
+            await Clients.Group(step + meeting).SendAsync("RecieveMessage", message);
         }
     }
 }

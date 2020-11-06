@@ -18,7 +18,7 @@ namespace agiprog.Data
             NavigationManager = navigationManager;
         }
 
-        public async Task StartConnectionAsync(Action<string, string> RecieveMessage)
+        public async Task StartConnectionAsync(Action<MessageBody> RecieveMessage)
         {
             string baseUrl = NavigationManager.BaseUri;
 
@@ -28,7 +28,7 @@ namespace agiprog.Data
                 .WithUrl(_hubUrl) // _hubUrl is your base Url + Hub Url
                 .Build();
             // Add Handler for when a client receives a broadcast message
-            _hubConnection.On<string, string>("RecieveMessage", RecieveMessage);
+            _hubConnection.On<MessageBody>("RecieveMessage", RecieveMessage);
             // Then you start the connection
             await _hubConnection.StartAsync();
         }
@@ -36,7 +36,7 @@ namespace agiprog.Data
         public async Task Disconect(int step, String meeting, string username)
         {
             await _hubConnection.SendAsync("LeaveRoomAsync", step, meeting);
-            await _hubConnection.SendAsync("SendMessageToGroup",step,meeting,username, $"[Notice] {username} left chat room.");
+            await _hubConnection.SendAsync("SendMessageToGroup",step,meeting, new MessageBody() { User = username, Chat = $"[Notice] {username} left chat room.", At = DateTime.Now });
             await _hubConnection.StopAsync();
             await _hubConnection.DisposeAsync();
             _hubConnection = null;
@@ -45,13 +45,13 @@ namespace agiprog.Data
         public async Task JoinGroup(int step, String meeting, string username)
         {
             await _hubConnection.SendAsync("JoinGroup",step,meeting);
-            await _hubConnection.SendAsync("SendMessageToGroup", step, meeting, username, $"[Notice] {username} joined chat room.");
+            await _hubConnection.SendAsync("SendMessageToGroup", step, meeting, new MessageBody() { User = username, Chat = $"[Notice] {username} joined chat room.", At = DateTime.Now });
         }
 
 
-        public async Task SendMessageToGroup(int step, String meeting, string username, string message)
+        public async Task SendMessageToGroup(int step, String meeting, MessageBody message)
         {
-            await _hubConnection.SendAsync("SendMessageToGroup", step, meeting, username, message);
+            await _hubConnection.SendAsync("SendMessageToGroup", step, meeting, message);
         }
 
     }

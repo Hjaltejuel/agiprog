@@ -23,7 +23,7 @@
     @foreach (var step in meeting.Roadmap.RoadmapSteps.Select(s => s.Step))
     {
         <div class="box @(i%2 == 0 ? "right" : "left")">
-            <agiprog.Components.Box stepId="@step.StepId" OnClick="setModal"></agiprog.Components.Box>
+            <agiprog.Components.Box stepId="@step.StepId" date="@meeting.StepDates.Find(d => d.StepId == step.StepId).Date" OnClick="setModal"></agiprog.Components.Box>
         </div>
         i++;
     }
