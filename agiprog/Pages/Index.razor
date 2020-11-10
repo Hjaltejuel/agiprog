@@ -15,7 +15,7 @@
 </section>
 
 <div class="container">
-    <p style="margin-left:95%;" class="@(fadeaway == false ? "fadein" : "fadeoutfast" )  bubble speech text-black-50">Hello There!!! I am the agile ghost, and will help you on your journey. Enter meeting ID and press enter to begin <button class="btn btn-primary @(fadeaway == false ? "" : "fadeoutfast" )" @onclick="cfadeaway">hide</button></p>
+    <p style="margin-left:95%;" class="@(fadeaway == false ? "fadein" : "fadeoutfast" )  bubble speech text-black-50">Hello There!!! I am the agile ghost, and will help you on your journey. Enter client ID and press enter to begin <button class="btn btn-primary @(fadeaway == false ? "" : "fadeoutfast" )" @onclick="cfadeaway">hide</button></p>
     <svg class="ghost" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
          width="127.433px" height="132.743px" viewBox="0 0 127.433 132.743" enable-background="new 0 0 127.433 132.743"
          xml:space="preserve">
@@ -90,13 +90,13 @@
 </div>
 <div class="form__group field">
     <input @bind="meeting" @onkeyup="onKeyPress" disabled="@IsDisabled" type="input" class="form__field" placeholder="@placeholder" name="name" id='name' required />
-    <label for="name" class="form__label">Meeting ID</label>
+    <label for="name" class="form__label">Client ID</label>
 </div>
 <div style="max-height:500px; margin-top:1.5em;">
     <AuthorizeView>
         <Authorized>
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
-                Launch Existing meetings
+                Launch Existing Clients
             </button>
         </Authorized>
     </AuthorizeView>
@@ -107,7 +107,7 @@
     <div class="modal-dialog modal-xl modal-dialog-centered" style="" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title text-black-50" id="exampleModalLongTitle">Existing meetings</h5>
+                <h5 class="modal-title text-black-50" id="exampleModalLongTitle">Existing clients</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -120,13 +120,13 @@
                         <li>
                             <hr style="margin:1.2em; background-color:black" />
                             <div>
-                                Meeting name : @meet.Name
+                                Client name : @meet.Name
                             </div>
                             <div>
-                                Meeting ID : @meet.MeetingId
+                                Client ID : @meet.MeetingId
                             </div>
                             <div>
-                                Link : <a onclick="$('#exampleModalCenter').modal('hide')" class="text-black-50" href="/meeting/@meet.MeetingId">Go to meeting</a>
+                                Link : <a onclick="$('#exampleModalCenter').modal('hide')" class="text-black-50" href="/meeting/@meet.MeetingId">Go to Client</a>
                             </div>
 
                         </li>
@@ -175,7 +175,7 @@
             var result = await meetingService.FindMeeting(meeting);
             if (result == null)
             {
-                toastService.ShowWarning("We were unable to find your specified meeting!");
+                toastService.ShowWarning("We were unable to find your specified client!");
             }
             else
             {
