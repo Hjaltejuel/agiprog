@@ -6,7 +6,6 @@
 @inject RoadmapService roadmapService
 @inject IJSRuntime JSRuntime
 @inject StepService stepService
-@inject RoadmapStepService roadmapStepService
 @attribute [Authorize]
 @using agiprog.Data
 
@@ -190,9 +189,10 @@
         {
 
             roadmaps.Add(roadmap);
+            roadmap.RoadmapSteps = SelectedValue.Select(i => new RoadmapStep() { Step = steps[i], Roadmap = roadmap }).ToList();
             await roadmapService.AddRoadmap(roadmap);
 
-            await roadmapStepService.AddRoadmapSteps(SelectedValue.Select(i => new RoadmapStep() { Step = steps[i], Roadmap = roadmap  }).ToList()) ;
+
 
             toastService.ShowSuccess("Roadmap saved");
             roadmap = new Roadmap();

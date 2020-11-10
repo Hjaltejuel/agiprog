@@ -17,24 +17,24 @@ namespace agiprog.Data
 
         public async Task<Roadmap> FindRoadmap(int RoadmapId)
         {
-            return await agiprogContext.roadmaps.FindAsync(RoadmapId);
+            return await agiprogContext.Roadmaps.FindAsync(RoadmapId);
         }
 
         public  List<Roadmap> FindAllRoadmaps()
         {
-            return agiprogContext.roadmaps.ToList();
+            return agiprogContext.Roadmaps.ToList();
         }
 
         public async Task<int> AddRoadmap(Roadmap Roadmap)
         {
-            agiprogContext.roadmaps.Add(Roadmap);
+            agiprogContext.Roadmaps.Add(Roadmap);
             await agiprogContext.SaveChangesAsync();
             return Roadmap.RoadmapID;
         }
 
         public async Task RemoveRoadmap(Roadmap roadmap)
         {
-            agiprogContext.roadmaps.Remove(roadmap);
+            agiprogContext.Roadmaps.Remove(roadmap);
             await agiprogContext.SaveChangesAsync();
         }
     }

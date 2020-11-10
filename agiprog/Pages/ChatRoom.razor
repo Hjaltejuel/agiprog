@@ -1,0 +1,215 @@
+﻿@page "/chatroom"
+@inject NavigationManager navigationManager
+@inject HubService hub
+@inject MeetingService MeetingService
+@inject MessageService MessageService
+@using agiprog.Data
+@using Microsoft.AspNetCore.SignalR.Client
+
+<h1>Give feedback and explain your problems</h1>
+<hr />
+
+@if (!_isChatting)
+{
+    <p>
+        Enter your name to start chatting:
+    </p>
+
+    <input type="text" maxlength="32" @bind="@_username" />
+    <button type="button" @onclick="@Chat"><span class="oi oi-chat" aria-hidden="true"></span> Chat!</button>
+
+    // Error messages
+    @if (_message != null)
+    {
+        <div class="invalid-feedback">@_message</div>
+        <small id="emailHelp" class="form-text text-muted">@_message</small>
+    }
+}
+else
+{
+    // banner to show current user
+<div class="alert alert-secondary mt-4" role="alert">
+    <span class="oi oi-person mr-2" aria-hidden="true"></span>
+    <span>You are connected as <b>@_username</b></span>
+    <button class="btn btn-sm btn-warning ml-md-auto" @onclick="@DisconnectAsync">Disconnect</button>
+    @if (total > loaded)
+    {
+        <button class="btn btn-primary" @onclick="@(async () =>await LoadMore())">Load more entities </button>
+    }
+</div>
+    // display messages
+
+    <div style="max-height:700px; overflow:scroll" id="scrollbox">
+
+        @foreach (var item in _messages)
+        {
+            @if (IsNotice(item))
+            {
+                <div class="alert alert-info">@item.Chat</div>
+            }
+            else
+            {
+                <div class="@getCss(item)">
+                    <div class="user">@item.User</div>
+                    <p>@item.At</p>
+                    <div class="msg">@item.Chat</div>
+                    <button class="btn btn-primary" @onclick="@(async () =>await Delete(item))">Delete message</button>
+                </div>
+            }
+        }
+        <hr />
+        <textarea class="input-lg" placeholder="enter your comment" @bind="@_newMessage"></textarea>
+        <button class="btn btn-default" @onclick="@(() => SendAsync(_newMessage))">Send</button>
+    </div>
+}
+
+@code {
+    // flag to indicate chat status
+    private bool _isChatting = false;
+
+    // name of the user who will be chatting
+    private string _username;
+
+    private int loaded { get; set; }
+
+    private int total { get; set; }
+
+    [Parameter]
+    public int stepId { get; set; }
+
+    [Parameter]
+    public string meetingId { get; set; }
+
+    public Message message { get; set; }
+
+    // on-screen message
+    private string _message;
+
+    // new message input
+    private string _newMessage;
+
+    // list of messages in chat
+    private List<MessageBody> _messages = new List<MessageBody>();
+
+
+    private async Task Delete(MessageBody message)
+    {
+        _messages.Remove(message);
+        this.message.MessageBodies.Remove(message);
+        await (MessageService.UpdateMessage(this.message));
+    }
+    public async Task LoadMore()
+    {
+        AppendMessages(message.MessageBodies.OrderByDescending(m => m.At).Skip(loaded).Take(loaded +10).ToList());
+        loaded = loaded + 10 ;
+
+    }
+    private bool IsNotice(MessageBody message)
+    {
+        return message.Chat.StartsWith("[Notice]");
+    }
+
+    private String getCss(MessageBody message)
+    {
+        return message.User.Equals(_username, StringComparison.OrdinalIgnoreCase) ? "sent" : "received";
+    }
+    public async Task Chat()
+    {
+        // check username is valid
+        if (string.IsNullOrWhiteSpace(_username))
+        {
+            _message = "Please enter a name";
+            return;
+        };
+
+        try
+        {
+            // Start chatting and force refresh UI.
+            _isChatting = true;
+            await Task.Delay(1);
+
+            // remove old messages if any
+            _messages.Clear();
+
+            message = await MessageService.FindMessage(stepId, meetingId);
+
+            if(message == null)
+            {
+                message = new Message() { MeetingId = meetingId, StepId = stepId, MessageBodies = new List<MessageBody>() };
+                await MessageService.AddMessage(message);
+            }
+            LoadInitial(message.MessageBodies.OrderByDescending(m => m.At).Skip(0).Take(10).ToList());
+            loaded = 10;
+
+            total = message.MessageBodies.Count();
+
+            await hub.StartConnectionAsync(BroadcastMessage);
+            await hub.JoinGroup(stepId, meetingId, _username);
+        }
+        catch (Exception e)
+        {
+            _message = $"ERROR: Failed to start chat client: {e.Message}";
+            _isChatting = false;
+        }
+    }
+
+    private void BroadcastMessage(MessageBody message)
+    {
+
+        _messages.Add(message);
+
+        // Inform blazor the UI needs updating
+        StateHasChanged();
+    }
+
+    private void LoadInitial(List<MessageBody> messages)
+    {
+        messages.Reverse();
+        _messages.AddRange( messages);
+
+        // Inform blazor the UI needs updating
+        StateHasChanged();
+    }
+
+    private void AppendMessages(List<MessageBody> messages)
+    {
+        messages.Reverse();
+        _messages.InsertRange(0, messages);
+
+        // Inform blazor the UI needs updating
+        StateHasChanged();
+    }
+
+    public async Task DisconnectAsync()
+    {
+        if (_isChatting)
+        {
+            await hub.Disconect(stepId, meetingId, _username);
+
+            _isChatting = false;
+
+            // remove old messages if any
+            _messages.Clear();
+
+            _message = null;
+
+            StateHasChanged();
+        }
+    }
+
+    private async Task SendAsync(string message)
+    {
+        if (_isChatting && !string.IsNullOrWhiteSpace(message))
+        {
+            var time = DateTime.Now;
+            var entity = new MessageBody { At = time, Chat = message, User = _username };
+            this.message.MessageBodies.Add(entity);
+            await MessageService.UpdateMessage(this.message);
+            await hub.SendMessageToGroup(stepId, meetingId, entity);
+
+            _newMessage = string.Empty;
+        }
+    }
+
+
+}

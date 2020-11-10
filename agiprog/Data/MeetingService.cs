@@ -17,7 +17,7 @@ namespace agiprog.Data
 
         public async Task<Meeting> FindMeeting(String meetingId)
         {
-            return await agiprogContext.meetings.FindAsync(meetingId);
+            return await agiprogContext.Meetings.FindAsync(meetingId);
         }
         public async Task UpdateMeeting(Meeting meeting)
         {
@@ -25,21 +25,23 @@ namespace agiprog.Data
             await agiprogContext.SaveChangesAsync();
         }
 
+
+
         public List<Meeting> FindAllMeetings()
         {
-            return agiprogContext.meetings.ToList();
+            return agiprogContext.Meetings.ToList();
         }
 
         public async Task<String> AddMeeting(Meeting meeting)
         {
-            agiprogContext.meetings.Add(meeting);
+            agiprogContext.Meetings.Add(meeting);
             await agiprogContext.SaveChangesAsync();
             return meeting.MeetingId;
         }
 
         public async Task RemoveMeeting(Meeting meeting)
         {
-            agiprogContext.meetings.Remove(meeting);
+            agiprogContext.Meetings.Remove(meeting);
             await agiprogContext.SaveChangesAsync();
 
         }

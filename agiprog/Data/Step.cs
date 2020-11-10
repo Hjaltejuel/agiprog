@@ -23,7 +23,9 @@ namespace agiprog.Data
 
         public String? Img { get; set; }
 
+        public virtual List<Message> Messages { get; set; }
         public virtual List<RoadmapStep> RoadmapSteps { get; set; }
 
+        public virtual List<StepDate> StepDates { get; set; }
     }
 }

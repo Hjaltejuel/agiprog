@@ -29,6 +29,7 @@
             </div>
 
         </div>
+
         <div class="col-md-5">
             <div class="form-group align-items-center">
                 <label class="font-weight-bold" for="selecter">Select the roadmap for this client</label>
@@ -41,11 +42,34 @@
             </div>
         </div>
 
+
     </div>
+    @if (StepDates != null)
+    {
+        <div class="row md-5">
+
+            <div class="col-md-5">
+
+                <label class="font-weight-bold" for="names">Select start dates of selected steps in roadmap</label>
+                <div style="max-height:500px; overflow:@overflow" class="list-group" id="names">
+                    <div class="form-group align-items-center">
+                        @foreach (var date in StepDates)
+                        {
+                            <label class="font-weight-bold" for="name">@date.Step.Name</label>
+                            <InputDate type="date" class="form-control" id="name" aria-describedby="emailHelp" @bind-Value="date.Date" placeholder="Enter date" />
+                        }
+                    </div>
+                </div>
+
+            </div>
+        
 
 
-    <button class="btn btn-primary" type="submit">Submit</button>
-</EditForm>
+        </div>
+    }
+
+        <button class="btn btn-primary" type="submit">Submit</button>
+    </EditForm>
 
 <h1>Created clients</h1>
 
@@ -111,6 +135,8 @@
 
 @code {
 
+    private List<StepDate> StepDates { get; set; }
+
     private Meeting meeting = new Meeting();
 
     private Meeting Modal = new Meeting();
@@ -164,12 +190,16 @@
         }
         else
         {
+        
+
+            meeting.StepDates = StepDates;
             meeting.Roadmap = roadmaps[SelectedValue];
             meetings.Add(meeting);
             await meetingService.AddMeeting(meeting);
             toastService.ShowSuccess("Meeting saved");
             meeting = new Meeting();
             StateHasChanged();
+            
         }
     }
 
@@ -204,6 +234,7 @@
         if (values != null)
         {
             SelectedValue = values.First();
+            StepDates = roadmaps[SelectedValue].RoadmapSteps.Select(step => new StepDate() { MeetingId = null, Step = step.Step, Date = DateTime.Now }).ToList();
         }
         else {
             SelectedValue = null;

@@ -32,7 +32,8 @@ namespace agiprog
             services.AddScoped<MeetingService>();
             services.AddScoped<StepService>();
             services.AddScoped<RoadmapService>();
-            services.AddScoped<RoadmapStepService>();
+            services.AddScoped<HubService>();
+            services.AddScoped<MessageService>();
             services.AddBlazoredToast();
         }
 
@@ -64,6 +65,7 @@ namespace agiprog
                 endpoints.MapRazorPages();
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
+                endpoints.MapHub<BlazorChatSampleHub>(BlazorChatSampleHub.HubUrl);
             });
         }
     }

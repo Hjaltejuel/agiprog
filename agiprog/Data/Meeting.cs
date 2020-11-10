@@ -21,6 +21,12 @@ namespace agiprog.Data
 
         public int CompletedSteps { get; set; }
 
+        public virtual List<Message> Messages { get; set; }
+
+        public virtual List<StepDate> StepDates { get; set; }
+
+
+
 
     }
 }
