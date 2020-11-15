@@ -1,4 +1,5 @@
-﻿using System;
+﻿using agiprog.Areas.Identity.Data;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,35 +9,28 @@ namespace agiprog.Data
     public class StepService
     {
 
-        private readonly agiprogContext agiprogContext;
 
-        public StepService(agiprogContext agiprogContext)
+        public async Task<Step> FindStep(int StepId, agiprogContext Context)
         {
-            this.agiprogContext = agiprogContext;
+            return await Context.Steps.FindAsync(StepId);
         }
 
-
-        public async Task<Step> FindStep(int StepId)
+        public List<Step> FindAllSteps( agiprogContext Context)
         {
-            return await agiprogContext.Steps.FindAsync(StepId);
+            return Context.Steps.ToList();
         }
 
-        public List<Step> FindAllSteps()
+        public async Task<int> AddStep(Step Step, agiprogContext Context)
         {
-            return agiprogContext.Steps.ToList();
-        }
-
-        public async Task<int> AddStep(Step Step)
-        {
-            agiprogContext.Steps.Add(Step);
-            await agiprogContext.SaveChangesAsync();
+            Context.Steps.Add(Step);
+            await Context.SaveChangesAsync();
             return Step.StepId;
         }
 
-        public async Task RemoveStep(Step step)
+        public async Task RemoveStep(Step step, agiprogContext Context)
         {
-            agiprogContext.Steps.Remove(step);
-            await agiprogContext.SaveChangesAsync();
+            Context.Steps.Remove(step);
+            await Context.SaveChangesAsync();
 
         }
     }

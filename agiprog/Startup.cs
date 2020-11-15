@@ -5,12 +5,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using agiprog.Data;
 using Blazored.Toast;
+using agiprog.Areas.Identity.Data;
 
 namespace agiprog
 {
@@ -27,13 +28,21 @@ namespace agiprog
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContextFactory<agiprogContext>(options => options.UseMySql(
+                 Configuration.GetConnectionString("agiprogContextConnection")).UseLazyLoadingProxies());
+
+            services.AddScoped<agiprogContext>(p => p.GetRequiredService<IDbContextFactory<agiprogContext>>().CreateDbContext());
+
+            services.AddDefaultIdentity<agiprogUser>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddEntityFrameworkStores<agiprogContext>();
+
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddScoped<MeetingService>();
+            services.AddScoped<MessageService>();
             services.AddScoped<StepService>();
             services.AddScoped<RoadmapService>();
             services.AddScoped<HubService>();
-            services.AddScoped<MessageService>();
             services.AddBlazoredToast();
         }
 

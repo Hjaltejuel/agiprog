@@ -40,5 +40,10 @@ namespace agiprog.Data
         {
             await Clients.Group(step + meeting).SendAsync("RecieveMessage", message);
         }
+
+        public async Task SendDeleteMessageToGroup(int step, String meeting, int messageId)
+        {
+            await Clients.Group(step + meeting).SendAsync("RecieveDeleteMessage", messageId);
+        }
     }
 }

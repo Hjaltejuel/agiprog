@@ -6,6 +6,7 @@
 @inject RoadmapService roadmapService
 @inject IJSRuntime JSRuntime
 @inject StepService stepService
+@inject agiprog.Areas.Identity.Data.IDbContextFactory<agiprogContext> DbFactory
 @attribute [Authorize]
 @using agiprog.Data
 
@@ -93,7 +94,7 @@
 </div>
 
 
-<div  class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -105,22 +106,22 @@
             <div class="modal-body">
                 Description : @Modal.Description
                 <img style="max-width:100%" class="mr-3" src="@Modal.Image">
-           
+
                 <div style="max-height:500px; overflow:scroll" class="list-group">
                     @if (Modal.RoadmapSteps != null)
                     {
-                    @foreach (var s in @Modal.RoadmapSteps.Select(i => i.Step))
-                    {
-                        <div @onclick="() => select(s.StepId)" class="list-group-item list-group-item-action flex-column align-items-start @(ActiveMessageId == s.StepId ? "active" : "")">
-                            <div class="d-flex w-100 justify-content-between">
-                                <h5 class="mb-1 text-black-50">Name : @s.Name</h5>
+                        @foreach (var s in @Modal.RoadmapSteps.Select(i => i.Step))
+                        {
+                            <div @onclick="() => select(s.StepId)" class="list-group-item list-group-item-action flex-column align-items-start @(ActiveMessageId == s.StepId ? "active" : "")">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1 text-black-50">Name : @s.Name</h5>
+
+                                </div>
+                                <p class="mb-1 text-black-50">Description : @s.Description</p>
+                                <small>Video URL : @(s.VideoUrl == null ? "No video defined" : s.VideoUrl)</small>
 
                             </div>
-                            <p class="mb-1 text-black-50">Description : @s.Description</p>
-                            <small>Video URL : @(s.VideoUrl == null ? "No video defined" : s.VideoUrl)</small>
-
-                        </div>
-                    }
+                        }
                     }
                 </div>
             </div>
@@ -138,9 +139,10 @@
 
     private Roadmap Modal = new Roadmap();
 
-    private String overflow { get ; set ; }
 
-    private Dictionary<String,Step> steps { get; set; }
+    private String overflow { get; set; }
+
+    private Dictionary<String, Step> steps { get; set; }
 
     private String imageDataUrl { get; set; }
 
@@ -155,12 +157,15 @@
     {
         this.Modal = step;
 
+
     }
 
     protected override void OnInitialized()
     {
-        roadmaps = roadmapService.FindAllRoadmaps();
-        if(roadmaps != null && roadmaps.Count != 0)
+        using var Context = DbFactory.CreateDbContext();
+        roadmaps = roadmapService.FindAllRoadmaps(Context);
+        roadmaps.ForEach(r => r.RoadmapSteps.ToList());
+        if (roadmaps != null && roadmaps.Count != 0)
         {
             overflow = "scroll";
         }
@@ -168,13 +173,14 @@
         {
             overflow = "none";
         }
-        steps = stepService.FindAllSteps().ToDictionary(a => a.Name);
+        steps = stepService.FindAllSteps(Context).ToDictionary(a => a.Name);
     }
 
     private async Task delete(Roadmap roadmap)
     {
+        using var Context = DbFactory.CreateDbContext();
         roadmaps.Remove(roadmap);
-        await roadmapService.RemoveRoadmap(roadmap);
+        await roadmapService.RemoveRoadmap(roadmap,Context);
         toastService.ShowSuccess("Roadmap deleted");
         StateHasChanged();
     }
@@ -187,10 +193,10 @@
         }
         else
         {
-
+            using var Context = DbFactory.CreateDbContext();
             roadmaps.Add(roadmap);
             roadmap.RoadmapSteps = SelectedValue.Select(i => new RoadmapStep() { Step = steps[i], Roadmap = roadmap }).ToList();
-            await roadmapService.AddRoadmap(roadmap);
+            await roadmapService.AddRoadmap(roadmap,Context);
 
 
 
@@ -268,7 +274,7 @@
         }
     }
 
-    // method which will be triggered by javascript, need to pass the method name 
+    // method which will be triggered by javascript, need to pass the method name
     [JSInvokable]
     public void OnSelectedValue(string[] val)
     {

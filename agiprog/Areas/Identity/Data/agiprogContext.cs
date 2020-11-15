@@ -29,7 +29,12 @@ namespace agiprog.Data
         {
    
         }
- 
+
+        public override void Dispose()
+        {
+            base.Dispose();
+        }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -66,7 +71,10 @@ namespace agiprog.Data
                 .WithMany(c => c.StepDates)
                 .HasForeignKey(bc => bc.StepId);
 
-            builder.Entity<Message>().HasMany(bc => bc.MessageBodies).WithOne().OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<MessageBody>()
+                .HasOne(bc => bc.Message)
+                .WithMany(b => b.MessageBodies)
+                .HasForeignKey(bc => new { bc.MeetingId, bc.StepId });
         }
     }
 }

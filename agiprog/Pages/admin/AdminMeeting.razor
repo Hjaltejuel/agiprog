@@ -7,6 +7,7 @@
 @inject IJSRuntime JSRuntime
 @inject StepService stepService
 @inject MeetingService meetingService
+@inject agiprog.Areas.Identity.Data.IDbContextFactory<agiprogContext> DbFactory
 @attribute [Authorize]
 @using agiprog.Data
 
@@ -62,33 +63,33 @@
                 </div>
 
             </div>
-        
+
 
 
         </div>
     }
 
-        <button class="btn btn-primary" type="submit">Submit</button>
-    </EditForm>
+    <button class="btn btn-primary" type="submit">Submit</button>
+</EditForm>
 
 <h1>Created meetings</h1>
 
 <div style="max-height:500px; overflow:@overflow" class="list-group">
     @foreach (var s in meetings)
     {
-    <div @onclick="() => select(s.MeetingId)" class="list-group-item list-group-item-action flex-column align-items-start @(ActiveMessageId == null ? "" : ActiveMessageId.Equals(s.MeetingId) ? "active" : "")">
-        <div class="d-flex w-100 justify-content-between">
-            <h5 class="mb-1 text-black-50">Name : @s.Name</h5>
-            <div>
-                <button class="btn btn-danger" @onclick="() => delete(s)">Delete</button>
-                <button type="button" @onclick="() => setModal(s)" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
-                    Launch view
-                </button>
+        <div @onclick="() => select(s.MeetingId)" class="list-group-item list-group-item-action flex-column align-items-start @(ActiveMessageId == null ? "" : ActiveMessageId.Equals(s.MeetingId) ? "active" : "")">
+            <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1 text-black-50">Name : @s.Name</h5>
+                <div>
+                    <button class="btn btn-danger" @onclick="() => delete(s)">Delete</button>
+                    <button type="button" @onclick="@(async () => await setModal(s))" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+                        Launch view
+                    </button>
+                </div>
             </div>
+            <p class="mb-1 text-black-50">Description : @(s.Roadmap == null ? "Roadmap is null" : s.Roadmap.Name)</p>
+            <small>Meeting id : @(s.MeetingId)</small>
         </div>
-        <p class="mb-1 text-black-50">Description : @(s.Roadmap == null ? "Roadmap is null" : s.Roadmap.Name)</p>
-        <small>Meeting id : @(s.MeetingId)</small>
-    </div>
     }
 </div>
 
@@ -111,17 +112,17 @@
                 </div>
 
                 <div style="max-height:500px; overflow:scroll" class="list-group">
-                    @if (Modal.Roadmap != null)
+                    @if (ModalRoadmap != null)
                     {
-                    <div @onclick="() => subSelect(Modal.Roadmap.RoadmapID)" class="list-group-item list-group-item-action flex-column align-items-start @(SubActiveMessageId == Modal.Roadmap.RoadmapID ? "active" : "")">
-                        <div class="d-flex w-100 justify-content-between">
-                            <h5 class="mb-1 text-black-50">Name : @Modal.Roadmap.Name</h5>
+                        <div @onclick="() => subSelect(ModalRoadmap.RoadmapID)" class="list-group-item list-group-item-action flex-column align-items-start @(SubActiveMessageId == ModalRoadmap.RoadmapID ? "active" : "")">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1 text-black-50">Name : @ModalRoadmap.Name</h5>
 
+                            </div>
+                            <p class="mb-1 text-black-50">Description : @ModalRoadmap.Description</p>
+                            <img style="max-width:100%" class="mr-3" src="@ModalRoadmap.Image">
                         </div>
-                        <p class="mb-1 text-black-50">Description : @Modal.Roadmap.Description</p>
-                        <img style="max-width:100%" class="mr-3" src="@Modal.Roadmap.Image">
-                    </div>
-                        
+
                     }
                 </div>
             </div>
@@ -141,6 +142,8 @@
 
     private Meeting Modal = new Meeting();
 
+    private Roadmap ModalRoadmap { get; set; }
+
     private String overflow { get; set; }
 
     private Dictionary<String, Roadmap> roadmaps { get; set; }
@@ -153,16 +156,20 @@
 
     private int SubActiveMessageId { get; set; }
 
-    private void setModal(Meeting step)
+    private async Task setModal(Meeting step)
     {
+        using var Context = DbFactory.CreateDbContext();
         this.Modal = step;
+        if(step.RoadmapId != null)
+            this.ModalRoadmap = await roadmapService.FindRoadmap(step.RoadmapId.Value, Context);
 
     }
 
     protected override void OnInitialized()
     {
+        using var Context = DbFactory.CreateDbContext();
         ActiveMessageId = "";
-        meetings = meetingService.FindAllMeetings();
+        meetings = meetingService.FindAllMeetings(Context);
         if (meetings != null && meetings.Count != 0)
         {
             overflow = "scroll";
@@ -171,13 +178,14 @@
         {
             overflow = "none";
         }
-        roadmaps = roadmapService.FindAllRoadmaps().ToDictionary(a => a.Name);
+        roadmaps = roadmapService.FindAllRoadmaps(Context).ToDictionary(a => a.Name);
     }
 
     private async Task delete(Meeting meeting)
     {
+        using var Context = DbFactory.CreateDbContext();
         meetings.Remove(meeting);
-        await meetingService.RemoveMeeting(meeting);
+        await meetingService.RemoveMeeting(meeting,Context);
         toastService.ShowSuccess("Meeting deleted");
         StateHasChanged();
     }
@@ -190,16 +198,16 @@
         }
         else
         {
-        
 
+            using var Context = DbFactory.CreateDbContext();
             meeting.StepDates = StepDates;
             meeting.Roadmap = roadmaps[SelectedValue];
             meetings.Add(meeting);
-            await meetingService.AddMeeting(meeting);
+            await meetingService.AddMeeting(meeting,Context);
             toastService.ShowSuccess("Meeting saved");
             meeting = new Meeting();
             StateHasChanged();
-            
+
         }
     }
 
@@ -228,7 +236,8 @@
     [JSInvokable]
     public void OnSelectedValue(string[] values)
     {
-        if (values != null && values.Length > 1) {
+        if (values != null && values.Length > 1)
+        {
             toastService.ShowError("You can only select one roadmap for a meeting.");
         }
         if (values != null)
@@ -236,7 +245,8 @@
             SelectedValue = values.First();
             StepDates = roadmaps[SelectedValue].RoadmapSteps.Select(step => new StepDate() { MeetingId = null, Step = step.Step, Date = DateTime.Now }).ToList();
         }
-        else {
+        else
+        {
             SelectedValue = null;
         }
         StateHasChanged();

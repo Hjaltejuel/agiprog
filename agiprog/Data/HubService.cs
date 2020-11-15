@@ -18,7 +18,7 @@ namespace agiprog.Data
             NavigationManager = navigationManager;
         }
 
-        public async Task StartConnectionAsync(Action<MessageBody> RecieveMessage)
+        public async Task StartConnectionAsync(Action<MessageBody> RecieveMessage, Action<int> RecieveDeleteMessage)
         {
             string baseUrl = NavigationManager.BaseUri;
 
@@ -29,6 +29,7 @@ namespace agiprog.Data
                 .Build();
             // Add Handler for when a client receives a broadcast message
             _hubConnection.On<MessageBody>("RecieveMessage", RecieveMessage);
+            _hubConnection.On<int>("RecieveDeleteMessage", RecieveDeleteMessage);
             // Then you start the connection
             await _hubConnection.StartAsync();
         }
@@ -54,5 +55,10 @@ namespace agiprog.Data
             await _hubConnection.SendAsync("SendMessageToGroup", step, meeting, message);
         }
 
+
+        public async Task SendDeleteMessageToGroup(int step, String meeting, int messageId)
+        {
+            await _hubConnection.SendAsync("SendDeleteMessageToGroup", step, meeting, messageId);
+        }
     }
 }

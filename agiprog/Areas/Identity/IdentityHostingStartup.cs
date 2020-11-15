@@ -15,14 +15,14 @@ namespace agiprog.Areas.Identity
     {
         public void Configure(IWebHostBuilder builder)
         {
-            builder.ConfigureServices((context, services) => {
-                services.AddDbContextPool<agiprogContext>(options =>
-                    options.UseMySql(
-                        context.Configuration.GetConnectionString("agiprogContextConnection")).UseLazyLoadingProxies());
-
-                services.AddDefaultIdentity<agiprogUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                    .AddEntityFrameworkStores<agiprogContext>();
-            });
+            //builder.ConfigureServices((context, services) => {
+            //    services.AddDbContextPool<agiprogContext>(options =>
+            //        options.UseMySql(
+            //            context.Configuration.GetConnectionString("agiprogContextConnection")).UseLazyLoadingProxies());
+            //
+            //    services.AddDefaultIdentity<agiprogUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            //        .AddEntityFrameworkStores<agiprogContext>();
+            //});
 
 
         }

@@ -24,7 +24,6 @@ namespace agiprog
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    
                     webBuilder.UseStartup<Startup>();
                 });
     }

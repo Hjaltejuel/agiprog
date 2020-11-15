@@ -1,17 +1,18 @@
 ﻿@using System.Globalization
 @using agiprog.Data
 @inject StepService stepService
+@inject agiprog.Areas.Identity.Data.IDbContextFactory<agiprogContext> DbFactory
 @if (step != null)
 {
-<div class="textbooble hiddenbutton"
-     style="resize:both;">
-    <h1> @step.Name</h1>
-    <p style="font-weight:bold">@date.ToString("yyyy/MM/dd")</p>
-    <p>@step.Description</p>
-    <button type="button" @onclick="@(() => OnClick.InvokeAsync(step))" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
-        View step
-    </button>
-</div>
+    <div class="textbooble hiddenbutton"
+         style="resize:both;">
+        <h1> @step.Name</h1>
+        <p style="font-weight:bold">@date.ToString("yyyy/MM/dd")</p>
+        <p>@step.Description</p>
+        <button type="button" @onclick="@(() => OnClick.InvokeAsync(step))" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+            View step
+        </button>
+    </div>
 }
 else
 {
@@ -35,7 +36,8 @@ else
 
     protected async override Task OnParametersSetAsync()
     {
-        step = await stepService.FindStep(stepId);
+        using var Context = DbFactory.CreateDbContext();
+        step = await stepService.FindStep(stepId,Context);
 
         base.StateHasChanged();
 

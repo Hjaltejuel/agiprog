@@ -1,4 +1,7 @@
-﻿using System;
+﻿using agiprog.Areas.Identity.Data;
+using agiprog.Data.DTO;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,42 +10,36 @@ namespace agiprog.Data
 {
     public class MeetingService
     {
-        private readonly agiprogContext agiprogContext;
+  
 
-        public MeetingService(agiprogContext agiprogContext)
+        public async Task<Meeting> FindMeeting(String meetingId, agiprogContext Context)
         {
-            this.agiprogContext = agiprogContext;
+            return await Context.Meetings.FindAsync(meetingId);
         }
-
-
-        public async Task<Meeting> FindMeeting(String meetingId)
+        public async Task UpdateMeeting(Meeting meeting, agiprogContext Context)
         {
-            return await agiprogContext.Meetings.FindAsync(meetingId);
-        }
-        public async Task UpdateMeeting(Meeting meeting)
-        {
-            agiprogContext.Update(meeting);
-            await agiprogContext.SaveChangesAsync();
+            Context.Update(meeting);
+            await Context.SaveChangesAsync();
         }
 
 
 
-        public List<Meeting> FindAllMeetings()
+        public List<Meeting> FindAllMeetings(agiprogContext Context)
         {
-            return agiprogContext.Meetings.ToList();
+            return Context.Meetings.ToList();
         }
 
-        public async Task<String> AddMeeting(Meeting meeting)
+        public async Task<String> AddMeeting(Meeting meeting, agiprogContext Context)
         {
-            agiprogContext.Meetings.Add(meeting);
-            await agiprogContext.SaveChangesAsync();
+            Context.Meetings.Add(meeting);
+            await Context.SaveChangesAsync();
             return meeting.MeetingId;
         }
 
-        public async Task RemoveMeeting(Meeting meeting)
+        public async Task RemoveMeeting(Meeting meeting, agiprogContext Context)
         {
-            agiprogContext.Meetings.Remove(meeting);
-            await agiprogContext.SaveChangesAsync();
+            Context.Meetings.Remove(meeting);
+            await Context.SaveChangesAsync();
 
         }
 

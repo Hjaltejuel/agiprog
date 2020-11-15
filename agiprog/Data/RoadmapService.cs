@@ -1,4 +1,5 @@
-﻿using System;
+﻿using agiprog.Areas.Identity.Data;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,35 +8,30 @@ namespace agiprog.Data
 {
     public class RoadmapService
     {
-        private readonly agiprogContext agiprogContext;
+ 
 
-        public RoadmapService(agiprogContext agiprogContext)
+        public async Task<Roadmap> FindRoadmap(int RoadmapId, agiprogContext Context)
         {
-            this.agiprogContext = agiprogContext;
+            return await Context.Roadmaps.FindAsync(RoadmapId);
         }
 
-
-        public async Task<Roadmap> FindRoadmap(int RoadmapId)
+        public  List<Roadmap> FindAllRoadmaps(agiprogContext Context)
         {
-            return await agiprogContext.Roadmaps.FindAsync(RoadmapId);
+
+            return Context.Roadmaps.ToList();
         }
 
-        public  List<Roadmap> FindAllRoadmaps()
+        public async Task<int> AddRoadmap(Roadmap Roadmap, agiprogContext Context)
         {
-            return agiprogContext.Roadmaps.ToList();
-        }
-
-        public async Task<int> AddRoadmap(Roadmap Roadmap)
-        {
-            agiprogContext.Roadmaps.Add(Roadmap);
-            await agiprogContext.SaveChangesAsync();
+            Context.Roadmaps.Add(Roadmap);
+            await Context.SaveChangesAsync();
             return Roadmap.RoadmapID;
         }
 
-        public async Task RemoveRoadmap(Roadmap roadmap)
+        public async Task RemoveRoadmap(Roadmap roadmap, agiprogContext Context)
         {
-            agiprogContext.Roadmaps.Remove(roadmap);
-            await agiprogContext.SaveChangesAsync();
+            Context.Roadmaps.Remove(roadmap);
+            await Context.SaveChangesAsync();
         }
     }
 }

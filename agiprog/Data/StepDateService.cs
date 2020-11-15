@@ -1,4 +1,5 @@
-﻿using System;
+﻿using agiprog.Areas.Identity.Data;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,21 +8,16 @@ namespace agiprog.Data
 {
     public class StepDateService
     {
-        private readonly agiprogContext agiprogContext;
 
-        public StepDateService(agiprogContext agiprogContext)
+
+        public async Task AddStepDate(StepDate StepDate, agiprogContext Context)
         {
-            this.agiprogContext = agiprogContext;
+            await Context.StepDates.AddAsync(StepDate);
         }
 
-        public async Task AddStepDate(StepDate StepDate)
+        public async Task<StepDate> FindStepDate(int StepId, String MeetingId, agiprogContext Context)
         {
-            await agiprogContext.StepDates.AddAsync(StepDate);
-        }
-
-        public async Task<StepDate> FindStepDate(int StepId, String MeetingId)
-        {
-            return await agiprogContext.StepDates.FindAsync(StepId, MeetingId);
+            return await Context.StepDates.FindAsync(StepId, MeetingId);
         }
     }
 }

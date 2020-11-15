@@ -2,6 +2,7 @@
 @inject MeetingService meetingService
 @inject IToastService toastService
 @inject NavigationManager NavigationManager
+@inject agiprog.Areas.Identity.Data.IDbContextFactory<agiprogContext> DbFactory
 @using Data
 <section>
     <div class="wrapper">
@@ -114,7 +115,7 @@
             </div>
             <div class="modal-body">
                 <ul>
-                    @foreach (var meet in meetingService.FindAllMeetings())
+                    @foreach (var meet in meetings)
                     {
 
                         <li>
@@ -147,12 +148,17 @@
     private bool IsDisabled { get; set; }
     private String placeholder = "asdfasdfsa";
     private bool fadeaway { get; set; }
+    private List<agiprog.Data.Meeting> meetings { get; set; }
 
     protected override void OnInitialized()
     {
         fadeaway = false;
-
+        using var Context = DbFactory.CreateDbContext();
+        meetings = meetingService.FindAllMeetings(Context);
+        StateHasChanged();
     }
+
+
 
     private void onChang(ChangeEventArgs args)
     {
@@ -161,7 +167,7 @@
 
     private void cfadeaway()
     {
-        fadeaway = true; 
+        fadeaway = true;
     }
 
     private async void onKeyPress(KeyboardEventArgs args)
@@ -170,9 +176,10 @@
 
         if (args.Key == "Enter")
         {
+            using var Context = DbFactory.CreateDbContext();
             IsDisabled = true;
 
-            var result = await meetingService.FindMeeting(meeting);
+            var result = await meetingService.FindMeeting(meeting,Context);
             if (result == null)
             {
                 toastService.ShowWarning("We were unable to find your specified meeting!");

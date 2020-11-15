@@ -2,28 +2,29 @@
 @using agiprog.Data
 @inject MeetingService meetingService
 @inject RoadmapService roadmapService
+@inject agiprog.Areas.Identity.Data.IDbContextFactory<agiprogContext> DbFactory
 @inject NavigationManager NavigationManager
 
 <section>
     <div class="wrapper">
         <h1 id="bouncetext" class="bouncetext alpha lato thin thick-header-line uppercase ls-small">
-            Welcome to your progress board : @(meeting?.Roadmap?.Name)
+            Welcome to your progress board : @(Roadmap?.Name)
         </h1>
         <h5 style="width:100%" class="text-md-center">
-            @(meeting?.Roadmap?.Description)
+            @(Roadmap?.Description)
         </h5>
     </div>
 </section>
 
-@if (meeting?.Roadmap?.RoadmapSteps != null)
+@if (Roadmap?.RoadmapSteps != null)
 {
 <div class="roadmap">
 
     @{var i = 1; }
-    @foreach (var step in meeting.Roadmap.RoadmapSteps.Select(s => s.Step))
+    @foreach (var step in RoadmapSteps.Select(s => s.Step))
     {
         <div class="box @(i%2 == 0 ? "right" : "left")">
-            <agiprog.Components.Box stepId="@step.StepId" date="@meeting.StepDates.Find(d => d.StepId == step.StepId).Date" OnClick="setModal"></agiprog.Components.Box>
+            <agiprog.Components.Box stepId="@step.StepId" date="@StepDates.Find(d => d.StepId == step.StepId).Date" OnClick="setModal"></agiprog.Components.Box>
         </div>
         i++;
     }
@@ -67,6 +68,12 @@
 
     private ChatRoom ChatRoom;
 
+    private Roadmap Roadmap;
+
+    private List<RoadmapStep> RoadmapSteps;
+
+    private List<StepDate> StepDates;
+
     public agiprog.Data.Meeting meeting { get; set; }
 
     private bool fadeaway { get; set; }
@@ -91,18 +98,23 @@
 
     private async Task complete()
     {
+        using var Context = DbFactory.CreateDbContext();
         meeting.CompletedSteps = meeting.CompletedSteps + 1;
-        await meetingService.UpdateMeeting(meeting);
+        await meetingService.UpdateMeeting(meeting,Context);
         StateHasChanged();
     }
 
     protected async override Task OnInitializedAsync()
     {
+        using var Context = DbFactory.CreateDbContext();
         fadeaway = false;
-        var result = await meetingService.FindMeeting(MeetingId);
+        var result = await meetingService.FindMeeting(MeetingId,Context);
         if (result == null)
             NavigationManager.NavigateTo("/");
         meeting = result;
+        Roadmap = result.Roadmap;
+        StepDates = result.StepDates;
+        RoadmapSteps = Roadmap.RoadmapSteps;
         StateHasChanged();
 
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using agiprog.Areas.Identity.Data;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,29 +9,46 @@ namespace agiprog.Data
 {
     public class MessageService
     {
-        private readonly agiprogContext agiprogContext;
 
-        public MessageService(agiprogContext agiprogContext)
-        {
-            this.agiprogContext = agiprogContext;
-        }
 
-        public async Task<Message> FindMessage(int StepId, String MeetingId)
+        public async Task<Message> FindMessage(int StepId, String MeetingId, agiprogContext Context)
         {
-            return await agiprogContext.Messages.FindAsync( MeetingId, StepId);
+            return await Context.Messages.SingleOrDefaultAsync(m  => m.StepId == StepId && m.MeetingId == MeetingId);
         }
 
 
-        public async Task AddMessage(Message message)
+
+
+        public async Task RemoveMessageBody( MessageBody Message, agiprogContext Context)
         {
-            await agiprogContext.Messages.AddAsync(message);
-            await agiprogContext.SaveChangesAsync();
+            var result = await Context.MessageBodies.FindAsync(Message.MessageBodyId);
+            if(result != null)
+            {
+                Context.MessageBodies.Remove(result);
+                await Context.SaveChangesAsync();
+            }
         }
 
-        public async Task UpdateMessage(Message message)
+        public async Task AddMessage(Message message, agiprogContext Context)
         {
-            agiprogContext.Messages.Update(message);
-            await agiprogContext.SaveChangesAsync();
+            await Context.Messages.AddAsync(message);
+            await Context.SaveChangesAsync();
+        }
+
+
+        public async Task AddMessageBody(MessageBody message, agiprogContext Context)
+        {
+            await Context.MessageBodies.AddAsync(message);
+            await Context.SaveChangesAsync();
+        }
+
+        public async Task<int> CountBodies(String meetingId, int stepId,  agiprogContext Context)
+        {
+            return await Context.MessageBodies.Where(m => m.MeetingId == meetingId && m.StepId == stepId).CountAsync();
+        }
+        public async Task<List<MessageBody>> FindMessageBodies(String meetingId, int stepId, int start, int stop, agiprogContext Context)
+        {
+            return await Context.MessageBodies.Where(m => m.MeetingId == meetingId && m.StepId == stepId).OrderByDescending(m => m.At).Skip(start).Take(stop).ToListAsync();
         }
 
     }
