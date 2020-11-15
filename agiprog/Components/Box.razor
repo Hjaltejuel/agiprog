@@ -9,9 +9,11 @@
         <h1> @step.Name</h1>
         <p style="font-weight:bold">@date.ToString("yyyy/MM/dd")</p>
         <p>@step.Description</p>
-        <button type="button" @onclick="@(() => OnClick.InvokeAsync(step))" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
-            View step
-        </button>
+        <div class="centerText">
+            <button type="button" @onclick="@(() => OnClick.InvokeAsync(step))" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+                Read more
+            </button>
+        </div>
     </div>
 }
 else
