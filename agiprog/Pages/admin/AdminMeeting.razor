@@ -11,7 +11,7 @@
 @attribute [Authorize]
 @using agiprog.Data
 
-<h1>Create Meetings</h1>
+<h1>Create client</h1>
 
 <hr id="eight" />
 
@@ -24,7 +24,7 @@
         <div class="col-md-5">
 
             <div class="form-group align-items-center">
-                <label class="font-weight-bold" for="name">Name of the meeting</label>
+                <label class="font-weight-bold" for="name">Name of the client</label>
                 <InputText type="text" class="form-control" id="name" aria-describedby="emailHelp" @bind-Value="meeting.Name" placeholder="Enter name" />
                 <small id="emailHelp" class="form-text text-muted">A good name equals a good start.</small>
             </div>
@@ -33,7 +33,7 @@
 
         <div class="col-md-5">
             <div class="form-group align-items-center">
-                <label class="font-weight-bold" for="selecter">Select the roadmap for this meeting</label>
+                <label class="font-weight-bold" for="selecter">Select the roadmap for this client</label>
                 <select class="selectpicker" id="selecter" multiple>
                     @foreach (var step in roadmaps)
                     {
@@ -72,7 +72,7 @@
     <button class="btn btn-primary" type="submit">Submit</button>
 </EditForm>
 
-<h1>Created meetings</h1>
+<h1>Created clients</h1>
 
 <div style="max-height:500px; overflow:@overflow" class="list-group">
     @foreach (var s in meetings)
