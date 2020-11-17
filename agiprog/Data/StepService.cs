@@ -27,6 +27,15 @@ namespace agiprog.Data
             return Step.StepId;
         }
 
+
+        public async Task<int> UpdateStep(Step Step, agiprogContext Context)
+        {
+            Context.Update(Step);
+            await Context.SaveChangesAsync();
+            return Step.StepId;
+            
+        }
+
         public async Task RemoveStep(Step step, agiprogContext Context)
         {
             Context.Steps.Remove(step);

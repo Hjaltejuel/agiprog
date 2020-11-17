@@ -10,27 +10,50 @@ namespace agiprog.Data
     {
  
 
-        public async Task<Roadmap> FindRoadmap(int RoadmapId, agiprogContext Context)
+        public async Task<NewRoadmap> FindNewRoadmap(int NewRoadmapId, agiprogContext Context)
         {
-            return await Context.Roadmaps.FindAsync(RoadmapId);
+            return await Context.NewRoadmaps.FindAsync(NewRoadmapId);
         }
 
-        public  List<Roadmap> FindAllRoadmaps(agiprogContext Context)
+
+
+        public  List<NewRoadmap> FindAllNewRoadmaps(agiprogContext Context)
         {
 
-            return Context.Roadmaps.ToList();
+            return Context.NewRoadmaps.ToList();
         }
 
-        public async Task<int> AddRoadmap(Roadmap Roadmap, agiprogContext Context)
-        {
-            Context.Roadmaps.Add(Roadmap);
+        public async Task<NewRoadmap> AddNewRoadmap(NewRoadmap NewRoadmap, List<Step> steps, agiprogContext Context)
+        { 
+            
+            var r = new NewRoadmap() { Description = NewRoadmap.Description, Name = NewRoadmap.Name, Image = NewRoadmap.Image };
+            Context.NewRoadmaps.Add(r);
             await Context.SaveChangesAsync();
-            return Roadmap.RoadmapID;
+
+            var rs = steps.Select(s => new RoadmapStep { StepId = s.StepId, NewRoadmapId = r.NewRoadmapId });
+            Context.RoadmapSteps.AddRange(rs);
+            await Context.SaveChangesAsync();
+            r.RoadmapSteps = rs.ToList();
+            return r;
         }
 
-        public async Task RemoveRoadmap(Roadmap roadmap, agiprogContext Context)
+
+        public async Task<int> UpdateNewRoadmap(NewRoadmap NewRoadmap, List<RoadmapStep> Selected, agiprogContext Context)
         {
-            Context.Roadmaps.Remove(roadmap);
+            Context.RoadmapSteps.RemoveRange(NewRoadmap.RoadmapSteps);
+            NewRoadmap.RoadmapSteps = Selected;
+            Context.Update(NewRoadmap);
+            await Context.SaveChangesAsync();
+            return NewRoadmap.NewRoadmapId;
+        }
+        
+        public List<Step> FindAllNewRoadmapStepsForNewRoadmap(NewRoadmap NewRoadmap, agiprogContext Context)
+        {
+            return Context.RoadmapSteps.Where(r => r.NewRoadmapId == NewRoadmap.NewRoadmapId).Select(a => a.Step).ToList();
+        }
+        public async Task RemoveNewRoadmap(NewRoadmap roadmap, agiprogContext Context)
+        {
+            Context.NewRoadmaps.Remove(roadmap);
             await Context.SaveChangesAsync();
         }
     }

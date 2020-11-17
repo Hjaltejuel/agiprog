@@ -53,7 +53,7 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="col">
-                        <div style="display:block;"class="row modal-item">
+                        <div style="display:block;"class="row modal-item-purp">
                             <div>
                                 <h5>Description</h5>
                             </div>
@@ -72,15 +72,6 @@
                         </div>
                         <div class="modal-item">
                             <ChatRoom @ref="ChatRoom" stepId="@Modal.StepId" meetingId="@MeetingId"></ChatRoom>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div style="display:block;">
-                            <div style="display:flex; align-items:center" class="modal-item">
-                                <h5 style="width:100%">Tag quiz</h5>
-                                <button @onclick="( async () => await takeQuizz())" class="modal-item-button" ><i class="fas fa-arrow-right fa-3x"></i></button>
-                            </div>
-
                         </div>
                     </div>
 
@@ -105,7 +96,7 @@
 
     private ChatRoom ChatRoom;
 
-    private Roadmap Roadmap;
+    private NewRoadmap Roadmap;
 
     private List<RoadmapStep> RoadmapSteps;
 

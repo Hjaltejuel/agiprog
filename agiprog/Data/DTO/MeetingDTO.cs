@@ -9,7 +9,7 @@ namespace agiprog.Data.DTO
     {
         public Meeting Meeting { get; set; }
 
-        public Roadmap Roadmap { get; set; }
+        public NewRoadmap NewRoadmap { get; set; }
 
         public List<RoadmapStep> RoadmapSteps {get;set;}
 

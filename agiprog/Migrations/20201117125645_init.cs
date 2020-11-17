@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace agiprog.Migrations
 {
-    public partial class Initial : Migration
+    public partial class init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -48,10 +48,10 @@ namespace agiprog.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Roadmaps",
+                name: "NewRoadmap",
                 columns: table => new
                 {
-                    RoadmapID = table.Column<int>(nullable: false)
+                    NewRoadmapId = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Name = table.Column<string>(nullable: false),
                     Image = table.Column<string>(nullable: true),
@@ -59,7 +59,7 @@ namespace agiprog.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Roadmaps", x => x.RoadmapID);
+                    table.PrimaryKey("PK_NewRoadmap", x => x.NewRoadmapId);
                 });
 
             migrationBuilder.CreateTable(
@@ -190,17 +190,17 @@ namespace agiprog.Migrations
                 {
                     MeetingId = table.Column<string>(nullable: false),
                     Name = table.Column<string>(nullable: false),
-                    RoadmapId = table.Column<int>(nullable: true),
+                    NewRoadmapId = table.Column<int>(nullable: true),
                     CompletedSteps = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Meetings", x => x.MeetingId);
                     table.ForeignKey(
-                        name: "FK_Meetings_Roadmaps_RoadmapId",
-                        column: x => x.RoadmapId,
-                        principalTable: "Roadmaps",
-                        principalColumn: "RoadmapID",
+                        name: "FK_Meetings_NewRoadmap_NewRoadmapId",
+                        column: x => x.NewRoadmapId,
+                        principalTable: "NewRoadmap",
+                        principalColumn: "NewRoadmapId",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -208,17 +208,17 @@ namespace agiprog.Migrations
                 name: "RoadmapSteps",
                 columns: table => new
                 {
-                    RoadmapId = table.Column<int>(nullable: false),
+                    NewRoadmapId = table.Column<int>(nullable: false),
                     StepId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RoadmapSteps", x => new { x.RoadmapId, x.StepId });
+                    table.PrimaryKey("PK_RoadmapSteps", x => new { x.NewRoadmapId, x.StepId });
                     table.ForeignKey(
-                        name: "FK_RoadmapSteps_Roadmaps_RoadmapId",
-                        column: x => x.RoadmapId,
-                        principalTable: "Roadmaps",
-                        principalColumn: "RoadmapID",
+                        name: "FK_RoadmapSteps_NewRoadmap_NewRoadmapId",
+                        column: x => x.NewRoadmapId,
+                        principalTable: "NewRoadmap",
+                        principalColumn: "NewRoadmapId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_RoadmapSteps_Steps_StepId",
@@ -283,18 +283,18 @@ namespace agiprog.Migrations
                 {
                     MessageBodyId = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    MeetingId = table.Column<string>(nullable: true),
+                    StepId = table.Column<int>(nullable: false),
                     Chat = table.Column<string>(nullable: true),
                     At = table.Column<DateTime>(nullable: false),
-                    User = table.Column<string>(nullable: true),
-                    MessageMeetingId = table.Column<string>(nullable: true),
-                    MessageStepId = table.Column<int>(nullable: true)
+                    User = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_MessageBodies", x => x.MessageBodyId);
                     table.ForeignKey(
-                        name: "FK_MessageBodies_Messages_MessageMeetingId_MessageStepId",
-                        columns: x => new { x.MessageMeetingId, x.MessageStepId },
+                        name: "FK_MessageBodies_Messages_MeetingId_StepId",
+                        columns: x => new { x.MeetingId, x.StepId },
                         principalTable: "Messages",
                         principalColumns: new[] { "MeetingId", "StepId" },
                         onDelete: ReferentialAction.Cascade);
@@ -338,14 +338,14 @@ namespace agiprog.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Meetings_RoadmapId",
+                name: "IX_Meetings_NewRoadmapId",
                 table: "Meetings",
-                column: "RoadmapId");
+                column: "NewRoadmapId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_MessageBodies_MessageMeetingId_MessageStepId",
+                name: "IX_MessageBodies_MeetingId_StepId",
                 table: "MessageBodies",
-                columns: new[] { "MessageMeetingId", "MessageStepId" });
+                columns: new[] { "MeetingId", "StepId" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Messages_StepId",
@@ -405,7 +405,7 @@ namespace agiprog.Migrations
                 name: "Steps");
 
             migrationBuilder.DropTable(
-                name: "Roadmaps");
+                name: "NewRoadmap");
         }
     }
 }

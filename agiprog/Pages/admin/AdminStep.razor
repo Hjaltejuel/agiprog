@@ -96,9 +96,76 @@
                 </button>
             </div>
             <div class="modal-body">
-                Description : @Modal.Description
-                <img style="max-width:100%" class="mr-3" src="@Modal.Img">
-                <iframe style="width:100%; height:25em;" src="@Modal.VideoUrl"></iframe>
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="Content" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Content</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="Edit" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Edit</a>
+                    </li>
+  
+                </ul>
+                <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="Content">
+                        Description : @Modal.Description
+                        <img style="max-width:100%" class="mr-3" src="@Modal.Img">
+                        <iframe style="width:100%; height:25em;" src="@Modal.VideoUrl"></iframe>
+                    </div>
+                    <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="Edit">
+                        <EditForm class="container" Model="@Modal" OnValidSubmit="@(async () => await HandleValidSubmitUpdate())">
+                            <DataAnnotationsValidator />
+                            <ValidationSummary />
+                            <div class="row md-5">
+
+                                <div class="col-md-5">
+
+                                    <div class="form-group align-items-center">
+                                        <label class="font-weight-bold" for="name">Name of the step</label>
+                                        <InputText type="text" class="form-control" id="name" aria-describedby="emailHelp" @bind-Value="@Modal.Name" placeholder="Enter name" />
+                                        <small id="emailHelp" class="form-text text-muted">A good name equals a good start.</small>
+                                    </div>
+
+                                </div>
+                                <div class="col-md-5">
+                                    <div class="form-group align-items-center">
+                                        <label class="font-weight-bold" for="description">Description of the step</label>
+                                        <InputTextArea type="text" class="form-control" id="description" aria-describedby="descHelp" @bind-Value="@Modal.Description" placeholder="Enter Description" />
+                                        <small id="descHelp" class="form-text text-muted">A description can never be too small</small>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="row md-5">
+                                <div class="col-md-5">
+                                    <div class="form-group align-items-center">
+                                        <label class="font-weight-bold" for="image">An image representing the step</label>
+                                        <InputFile type="file" class="form-control-file" id="image" OnChange="@(async (files) => await HandleFileSelectedUpdate(files))" placeholder="Please choose an image" />
+                                    </div>
+                                </div>
+                                <div class="col-md-5">
+                                    <div class="form-group align-items-center">
+                                        <label class="font-weight-bold" for="video">An optional URL for a video representing the step</label>
+                                        <InputText type="url" class="form-control-file" id="video" @bind-Value="@Modal.VideoUrl" placeholder="Enter URL" />
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="row md-5">
+                                <div class="col-md-5">
+                                    <div class="form-group align-items-center">
+                                        <img style="max-width:100%" class="mr-3" src="@imageDataUrlUpdate">
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <button class="btn btn-primary" type="submit">Submit</button>
+                        </EditForm>
+
+                    </div>
+                </div>
 
             </div>
             <div class="modal-footer">
@@ -115,6 +182,8 @@
     private Step Modal = new Step();
 
     private String imageDataUrl { get; set; }
+
+    private String imageDataUrlUpdate { get; set; }
 
     private List<Step> steps;
 
@@ -161,6 +230,22 @@
         StateHasChanged();
     }
 
+    private async Task HandleValidSubmitUpdate()
+    {
+        using var Context = DbFactory.CreateDbContext();
+        if (Modal.VideoUrl != null)
+        {
+            if (Modal.VideoUrl.Contains("youtube.com/watch?v="))
+            {
+                Modal.VideoUrl = Modal.VideoUrl.Replace("youtube.com/watch?v=", "youtube.com/embed/");
+            }
+        }
+
+        await stepService.UpdateStep(Modal, Context);
+        toastService.ShowSuccess("Step Updated");
+        StateHasChanged();
+    }
+
     private void select(int id)
     {
         ActiveMessageId = id;
@@ -200,6 +285,57 @@
                 this.imageDataUrl = imageDataUrl;
 
                 step.Img = this.imageDataUrl;
+                StateHasChanged();
+            }
+            else
+            {
+                toastService.ShowError("You must give either .png or .jpg format");
+                return;
+            }
+        }
+        else
+        {
+            toastService.ShowError("Your file must have an extension");
+            return;
+        }
+
+    }
+
+
+    private async Task HandleFileSelectedUpdate(IFileListEntry[] files)
+    {
+        var file = files.First();
+        if (file == null)
+        {
+            toastService.ShowError("Uploaded file did not exist");
+            return;
+        }
+
+        // Create a new instance of a 'FileInfo' object.
+        FileInfo fileInfo = new FileInfo(file.Name);
+
+        // I don't know if it's even possible for an extension to be upper case
+        var extension = fileInfo.Extension.ToLower();
+
+        // verify the extension exists
+        if (!String.IsNullOrWhiteSpace(fileInfo.Extension))
+        {
+
+            var format = "image/png";
+            // If the allowed extensions // fixed issue where uploading
+            if (AllowedExtensions.Contains(fileInfo.Extension.ToLower()))
+            {
+                var ms = new MemoryStream();
+                await file.Data.CopyToAsync(ms);
+                string imageBase64Data = Convert.ToBase64String(ms.ToArray());
+                var imageDataUrl =
+                          $"data:{format};base64,{imageBase64Data}";
+
+
+
+                this.imageDataUrlUpdate = imageDataUrl;
+
+                Modal.Img = this.imageDataUrlUpdate;
                 StateHasChanged();
             }
             else

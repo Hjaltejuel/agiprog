@@ -9,8 +9,8 @@ using agiprog.Data;
 namespace agiprog.Migrations
 {
     [DbContext(typeof(agiprogContext))]
-    [Migration("20201106015915_Initial")]
-    partial class Initial
+    [Migration("20201117125645_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -228,12 +228,12 @@ namespace agiprog.Migrations
                         .IsRequired()
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.Property<int?>("RoadmapId")
+                    b.Property<int?>("NewRoadmapId")
                         .HasColumnType("int");
 
                     b.HasKey("MeetingId");
 
-                    b.HasIndex("RoadmapId");
+                    b.HasIndex("NewRoadmapId");
 
                     b.ToTable("Meetings");
                 });
@@ -265,10 +265,10 @@ namespace agiprog.Migrations
                     b.Property<string>("Chat")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.Property<string>("MessageMeetingId")
+                    b.Property<string>("MeetingId")
                         .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
-                    b.Property<int?>("MessageStepId")
+                    b.Property<int>("StepId")
                         .HasColumnType("int");
 
                     b.Property<string>("User")
@@ -276,14 +276,14 @@ namespace agiprog.Migrations
 
                     b.HasKey("MessageBodyId");
 
-                    b.HasIndex("MessageMeetingId", "MessageStepId");
+                    b.HasIndex("MeetingId", "StepId");
 
                     b.ToTable("MessageBodies");
                 });
 
-            modelBuilder.Entity("agiprog.Data.Roadmap", b =>
+            modelBuilder.Entity("agiprog.Data.NewRoadmap", b =>
                 {
-                    b.Property<int>("RoadmapID")
+                    b.Property<int>("NewRoadmapId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
@@ -298,20 +298,20 @@ namespace agiprog.Migrations
                         .IsRequired()
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.HasKey("RoadmapID");
+                    b.HasKey("NewRoadmapId");
 
-                    b.ToTable("Roadmaps");
+                    b.ToTable("NewRoadmap");
                 });
 
             modelBuilder.Entity("agiprog.Data.RoadmapStep", b =>
                 {
-                    b.Property<int>("RoadmapId")
+                    b.Property<int>("NewRoadmapId")
                         .HasColumnType("int");
 
                     b.Property<int>("StepId")
                         .HasColumnType("int");
 
-                    b.HasKey("RoadmapId", "StepId");
+                    b.HasKey("NewRoadmapId", "StepId");
 
                     b.HasIndex("StepId");
 
@@ -414,9 +414,9 @@ namespace agiprog.Migrations
 
             modelBuilder.Entity("agiprog.Data.Meeting", b =>
                 {
-                    b.HasOne("agiprog.Data.Roadmap", "Roadmap")
+                    b.HasOne("agiprog.Data.NewRoadmap", "Roadmap")
                         .WithMany("Meetings")
-                        .HasForeignKey("RoadmapId");
+                        .HasForeignKey("NewRoadmapId");
                 });
 
             modelBuilder.Entity("agiprog.Data.Message", b =>
@@ -436,17 +436,17 @@ namespace agiprog.Migrations
 
             modelBuilder.Entity("agiprog.Data.MessageBody", b =>
                 {
-                    b.HasOne("agiprog.Data.Message", null)
+                    b.HasOne("agiprog.Data.Message", "Message")
                         .WithMany("MessageBodies")
-                        .HasForeignKey("MessageMeetingId", "MessageStepId")
+                        .HasForeignKey("MeetingId", "StepId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("agiprog.Data.RoadmapStep", b =>
                 {
-                    b.HasOne("agiprog.Data.Roadmap", "Roadmap")
+                    b.HasOne("agiprog.Data.NewRoadmap", "NewRoadmap")
                         .WithMany("RoadmapSteps")
-                        .HasForeignKey("RoadmapId")
+                        .HasForeignKey("NewRoadmapId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

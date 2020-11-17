@@ -7,9 +7,9 @@ namespace agiprog.Data
 {
     public class RoadmapStep
     {
-        public int RoadmapId { get; set; }
+        public int NewRoadmapId { get; set; }
 
-        public virtual Roadmap Roadmap { get; set; }
+        public virtual NewRoadmap NewRoadmap { get; set; }
 
         public int StepId { get; set; }
 

@@ -77,7 +77,7 @@
 <div style="max-height:500px; overflow:@overflow" class="list-group">
     @foreach (var s in roadmaps)
     {
-        <div @onclick="() => select(s.RoadmapID)" class="list-group-item list-group-item-action flex-column align-items-start @(ActiveMessageId == s.RoadmapID ? "active" : "")">
+        <div @onclick="() => select(s.NewRoadmapId)" class="list-group-item list-group-item-action flex-column align-items-start @(ActiveMessageId == s.NewRoadmapId ? "active" : "")">
             <div class="d-flex w-100 justify-content-between">
                 <h5 class="mb-1 text-black-50">Name : @s.Name</h5>
                 <div>
@@ -104,25 +104,98 @@
                 </button>
             </div>
             <div class="modal-body">
-                Description : @Modal.Description
-                <img style="max-width:100%" class="mr-3" src="@Modal.Image">
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="Content" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Content</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" @onclick="@(async () => await initialize())" id="Edit" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Edit</a>
+                    </li>
 
-                <div style="max-height:500px; overflow:scroll" class="list-group">
-                    @if (Modal.RoadmapSteps != null)
-                    {
-                        @foreach (var s in @Modal.RoadmapSteps.Select(i => i.Step))
-                        {
-                            <div @onclick="() => select(s.StepId)" class="list-group-item list-group-item-action flex-column align-items-start @(ActiveMessageId == s.StepId ? "active" : "")">
-                                <div class="d-flex w-100 justify-content-between">
-                                    <h5 class="mb-1 text-black-50">Name : @s.Name</h5>
+                </ul>
+                <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="Content">
+                        Description : @Modal.Description
+                        <img style="max-width:100%" class="mr-3" src="@Modal.Image">
+
+                        <div style="max-height:500px; overflow:scroll" class="list-group">
+                            @if (roadmapSteps != null)
+                            {
+                                @foreach (var s in roadmapSteps)
+                                {
+                                    <div @onclick="() => select(s.StepId)" class="list-group-item list-group-item-action flex-column align-items-start @(ActiveMessageId == s.StepId ? "active" : "")">
+                                        <div class="d-flex w-100 justify-content-between">
+                                            <h5 class="mb-1 text-black-50">Name : @s.Name</h5>
+
+                                        </div>
+                                        <p class="mb-1 text-black-50">Description : @s.Description</p>
+                                        <small>Video URL : @(s.VideoUrl == null ? "No video defined" : s.VideoUrl)</small>
+
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="Edit">
+                        <EditForm class="container" Model="@Modal" OnValidSubmit="@(async () => await HandleValidSubmitUpdate())">
+                            <DataAnnotationsValidator />
+                            <ValidationSummary />
+                            <div class="row md-5">
+
+                                <div class="col-md-5">
+
+                                    <div class="form-group align-items-center">
+                                        <label class="font-weight-bold" for="name">Name of the roadmap</label>
+                                        <InputText type="text" class="form-control" id="name" aria-describedby="emailHelp" @bind-Value="@Modal.Name" placeholder="Enter name" />
+                                        <small id="emailHelp" class="form-text text-muted">A good name equals a good start.</small>
+                                    </div>
 
                                 </div>
-                                <p class="mb-1 text-black-50">Description : @s.Description</p>
-                                <small>Video URL : @(s.VideoUrl == null ? "No video defined" : s.VideoUrl)</small>
+                                <div class="col-md-5">
+                                    <div class="form-group align-items-center">
+                                        <label class="font-weight-bold" for="description">Description of the roadmap</label>
+                                        <InputTextArea type="text" class="form-control" id="description" aria-describedby="descHelp" @bind-Value="@Modal.Description" placeholder="Enter Description" />
+                                        <small id="descHelp" class="form-text text-muted">A description can never be too small</small>
+                                    </div>
+                                </div>
 
                             </div>
-                        }
-                    }
+
+                            <div class="row md-5">
+                                <div class="col-md-5">
+                                    <div class="form-group align-items-center">
+                                        <label class="font-weight-bold" for="image">An image representing the roadmap</label>
+                                        <InputFile type="file" class="form-control-file" id="image" OnChange="@(async (files) => await HandleFileSelectedUpdated(files))" placeholder="Please choose an image" />
+                                    </div>
+                                </div>
+                                <div class="col-md-5">
+                                    <div class="form-group align-items-center">
+                                        <label class="font-weight-bold" for="selecter2">Select the steps for this roadmap</label>
+                                        <select class="selectpicker" id="selecter2" multiple>
+                                            @foreach (var step in steps)
+                                            {
+                                                <option>@step.Key</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="row md-5">
+                                <div class="col-md-5">
+                                    <div class="form-group align-items-center">
+                                        <img style="max-width:100%" class="mr-3" src="@imageDataUrlUpdate">
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <button class="btn btn-primary" type="submit">Submit</button>
+                        </EditForm>
+
+
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
@@ -135,9 +208,9 @@
 
 @code {
 
-    private Roadmap roadmap = new Roadmap();
+    private NewRoadmap roadmap = new NewRoadmap();
 
-    private Roadmap Modal = new Roadmap();
+    private NewRoadmap Modal = new NewRoadmap();
 
 
     private String overflow { get; set; }
@@ -146,24 +219,36 @@
 
     private String imageDataUrl { get; set; }
 
-    private List<Roadmap> roadmaps;
+    private String imageDataUrlUpdate { get; set; }
+
+    private List<NewRoadmap> roadmaps;
 
     private int ActiveMessageId { get; set; }
 
+    private bool isInited { get; set; }
 
     private List<String> AllowedExtensions = new List<string> { ".png", ".jpg" };
 
-    private void setModal(Roadmap step)
+    private List<Step> roadmapSteps { get; set; }
+
+    private void setModal(NewRoadmap step)
     {
+        using var Context = DbFactory.CreateDbContext();
         this.Modal = step;
+        this.roadmapSteps = roadmapService.FindAllNewRoadmapStepsForNewRoadmap(step,Context);
+    }
 
-
+    private async Task initialize()
+    {
+        if(!isInited)
+            await JSRuntime.InvokeVoidAsync("InitSelectPicker", DotNetObjectReference.Create(this), "OnSelectedValue", "#selecter2");
+        isInited = true;
     }
 
     protected override void OnInitialized()
     {
         using var Context = DbFactory.CreateDbContext();
-        roadmaps = roadmapService.FindAllRoadmaps(Context);
+        roadmaps = roadmapService.FindAllNewRoadmaps(Context);
         roadmaps.ForEach(r => r.RoadmapSteps.ToList());
         if (roadmaps != null && roadmaps.Count != 0)
         {
@@ -176,11 +261,11 @@
         steps = stepService.FindAllSteps(Context).ToDictionary(a => a.Name);
     }
 
-    private async Task delete(Roadmap roadmap)
+    private async Task delete(NewRoadmap roadmap)
     {
         using var Context = DbFactory.CreateDbContext();
         roadmaps.Remove(roadmap);
-        await roadmapService.RemoveRoadmap(roadmap,Context);
+        await roadmapService.RemoveNewRoadmap(roadmap,Context);
         toastService.ShowSuccess("Roadmap deleted");
         StateHasChanged();
     }
@@ -194,14 +279,31 @@
         else
         {
             using var Context = DbFactory.CreateDbContext();
-            roadmaps.Add(roadmap);
-            roadmap.RoadmapSteps = SelectedValue.Select(i => new RoadmapStep() { Step = steps[i], Roadmap = roadmap }).ToList();
-            await roadmapService.AddRoadmap(roadmap,Context);
+
+            var stepsL = SelectedValue.Select(i =>  steps[i]).ToList();
+            var roadmapL = await roadmapService.AddNewRoadmap(roadmap, stepsL, Context);
 
 
-
+            roadmaps.Add(roadmapL);
             toastService.ShowSuccess("Roadmap saved");
-            roadmap = new Roadmap();
+            roadmap = new NewRoadmap();
+            StateHasChanged();
+        }
+    }
+
+    private async Task HandleValidSubmitUpdate()
+    {
+        if (SelectedValue == null || SelectedValue.Length == 0)
+        {
+            toastService.ShowError("No steps defined, please add steps before creating a roadmap");
+        }
+        else
+        {
+            using var Context = DbFactory.CreateDbContext();
+            var selectedRoadmapSteps = SelectedValue.Select(i => new RoadmapStep() { Step = steps[i], NewRoadmap = Modal }).ToList();
+            await roadmapService.UpdateNewRoadmap(Modal, selectedRoadmapSteps, Context);
+            roadmapSteps = selectedRoadmapSteps.Select(s => s.Step).ToList();
+            toastService.ShowSuccess("Roadmap saved");
             StateHasChanged();
         }
     }
@@ -259,6 +361,56 @@
         }
 
     }
+
+
+    private async Task HandleFileSelectedUpdated(IFileListEntry[] files)
+    {
+        var file = files.First();
+        if (file == null)
+        {
+            toastService.ShowError("Uploaded file did not exist");
+            return;
+        }
+
+        // Create a new instance of a 'FileInfo' object.
+        FileInfo fileInfo = new FileInfo(file.Name);
+
+        // I don't know if it's even possible for an extension to be upper case
+        var extension = fileInfo.Extension.ToLower();
+
+        // verify the extension exists
+        if (!String.IsNullOrWhiteSpace(fileInfo.Extension))
+        {
+
+            var format = "image/png";
+            // If the allowed extensions // fixed issue where uploading
+            if (AllowedExtensions.Contains(fileInfo.Extension.ToLower()))
+            {
+                var ms = new MemoryStream();
+                await file.Data.CopyToAsync(ms);
+                string imageBase64Data = Convert.ToBase64String(ms.ToArray());
+                var imageDataUrl =
+                          $"data:{format};base64,{imageBase64Data}";
+
+
+                this.imageDataUrlUpdate = imageDataUrl;
+
+                Modal.Image = this.imageDataUrlUpdate;
+                StateHasChanged();
+            }
+            else
+            {
+                toastService.ShowError("You must give either .png or .jpg format");
+                return;
+            }
+        }
+        else
+        {
+            toastService.ShowError("Your file must have an extension");
+            return;
+        }
+
+    }
     // inject jsruntime to call javascript code
 
 
@@ -270,7 +422,7 @@
     {
         if (firstRender) // only needs to be called once per page render
         {
-            await JSRuntime.InvokeVoidAsync("InitSelectPicker", DotNetObjectReference.Create(this), "OnSelectedValue", ".selectpicker");
+            await JSRuntime.InvokeVoidAsync("InitSelectPicker", DotNetObjectReference.Create(this), "OnSelectedValue", "#selecter");
         }
     }
 

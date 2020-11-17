@@ -87,7 +87,6 @@
                     </button>
                 </div>
             </div>
-            <p class="mb-1 text-black-50">Description : @(s.Roadmap == null ? "Roadmap is null" : s.Roadmap.Name)</p>
             <small>Meeting id : @(s.MeetingId)</small>
         </div>
     }
@@ -104,27 +103,100 @@
                 </button>
             </div>
             <div class="modal-body">
-                <div>
-                    ID : @Modal.MeetingId;
-                </div>
-                <div>
-                    Completed Steps : @Modal.CompletedSteps;
-                </div>
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="Content" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Content</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" @onclick="@(async () => await initialize())" id="Edit" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Edit</a>
+                    </li>
 
-                <div style="max-height:500px; overflow:scroll" class="list-group">
-                    @if (ModalRoadmap != null)
-                    {
-                        <div @onclick="() => subSelect(ModalRoadmap.RoadmapID)" class="list-group-item list-group-item-action flex-column align-items-start @(SubActiveMessageId == ModalRoadmap.RoadmapID ? "active" : "")">
-                            <div class="d-flex w-100 justify-content-between">
-                                <h5 class="mb-1 text-black-50">Name : @ModalRoadmap.Name</h5>
-
-                            </div>
-                            <p class="mb-1 text-black-50">Description : @ModalRoadmap.Description</p>
-                            <img style="max-width:100%" class="mr-3" src="@ModalRoadmap.Image">
+                </ul>
+                <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="Content">
+                        <div>
+                            ID : @Modal.MeetingId;
+                        </div>
+                        <div>
+                            Completed Steps : @Modal.CompletedSteps;
                         </div>
 
-                    }
+                        <div style="max-height:500px; overflow:scroll" class="list-group">
+                            @if (ModalRoadmap != null)
+                            {
+                                <div @onclick="() => subSelect(ModalRoadmap.NewRoadmapId)" class="list-group-item list-group-item-action flex-column align-items-start @(SubActiveMessageId == ModalRoadmap.NewRoadmapId ? "active" : "")">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h5 class="mb-1 text-black-50">Name : @ModalRoadmap.Name</h5>
+
+                                    </div>
+                                    <p class="mb-1 text-black-50">Description : @ModalRoadmap.Description</p>
+                                    <img style="max-width:100%" class="mr-3" src="@ModalRoadmap.Image">
+                                </div>
+
+                            }
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="Edit">
+                        <EditForm class="container" Model="@Modal" OnValidSubmit="@(async () => await HandleValidSubmitUpdate())">
+                            <DataAnnotationsValidator />
+                            <ValidationSummary />
+                            <div class="row md-5">
+
+                                <div class="col-md-5">
+
+                                    <div class="form-group align-items-center">
+                                        <label class="font-weight-bold" for="name">Name of the client</label>
+                                        <InputText type="text" class="form-control" id="name" aria-describedby="emailHelp" @bind-Value="meeting.Name" placeholder="Enter name" />
+                                        <small id="emailHelp" class="form-text text-muted">A good name equals a good start.</small>
+                                    </div>
+
+                                </div>
+
+                                <div class="col-md-5">
+                                    <div class="form-group align-items-center">
+                                        <label class="font-weight-bold" for="selecter">Select the roadmap for this client</label>
+                                        <select class="selectpicker" id="selecter2" multiple>
+                                            @foreach (var step in roadmaps)
+                                            {
+                                                <option>@step.Key</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                            @if (StepDates != null)
+                            {
+                                <div class="row md-5">
+
+                                    <div class="col-md-5">
+
+                                        <label class="font-weight-bold" for="names">Select start dates of selected steps in roadmap</label>
+                                        <div style="max-height:500px; overflow:@overflow" class="list-group" id="names">
+                                            <div class="form-group align-items-center">
+                                                @foreach (var date in StepDates)
+                                                {
+                                                    <label class="font-weight-bold" for="name">@date.Step.Name</label>
+                                                    <InputDate type="date" class="form-control" id="name" aria-describedby="emailHelp" @bind-Value="date.Date" placeholder="Enter date" />
+                                                }
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+
+
+                                </div>
+                            }
+
+                            <button class="btn btn-primary" type="submit">Submit</button>
+                        </EditForm>
+
+
+                    </div>
                 </div>
+                
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -136,17 +208,17 @@
 
 @code {
 
-    private List<StepDate> StepDates { get; set; }
+    private List<StepDate> StepDates = new List<StepDate>();
 
     private Meeting meeting = new Meeting();
 
     private Meeting Modal = new Meeting();
 
-    private Roadmap ModalRoadmap { get; set; }
+    private NewRoadmap ModalRoadmap { get; set; }
 
     private String overflow { get; set; }
 
-    private Dictionary<String, Roadmap> roadmaps { get; set; }
+    private Dictionary<String, NewRoadmap> roadmaps { get; set; }
 
     private String imageDataUrl { get; set; }
 
@@ -156,13 +228,23 @@
 
     private int SubActiveMessageId { get; set; }
 
+    private bool isInited { get; set; }
+
     private async Task setModal(Meeting step)
     {
         using var Context = DbFactory.CreateDbContext();
         this.Modal = step;
-        if(step.RoadmapId != null)
-            this.ModalRoadmap = await roadmapService.FindRoadmap(step.RoadmapId.Value, Context);
+        if(step.NewRoadmapId != null)
+            this.ModalRoadmap = await roadmapService.FindNewRoadmap(step.NewRoadmapId.Value, Context);
 
+    }
+
+
+    private async Task initialize()
+    {
+        if (!isInited)
+            await JSRuntime.InvokeVoidAsync("InitSelectPicker", DotNetObjectReference.Create(this), "OnSelectedValue", "#selecter2");
+        isInited = true;
     }
 
     protected override void OnInitialized()
@@ -178,7 +260,7 @@
         {
             overflow = "none";
         }
-        roadmaps = roadmapService.FindAllRoadmaps(Context).ToDictionary(a => a.Name);
+        roadmaps = roadmapService.FindAllNewRoadmaps(Context).ToDictionary(a => a.Name);
     }
 
     private async Task delete(Meeting meeting)
@@ -200,12 +282,33 @@
         {
 
             using var Context = DbFactory.CreateDbContext();
-            meeting.StepDates = StepDates;
-            meeting.Roadmap = roadmaps[SelectedValue];
-            meetings.Add(meeting);
-            await meetingService.AddMeeting(meeting,Context);
+
+            meeting.NewRoadmapId = roadmaps[SelectedValue].NewRoadmapId;
+            var meetingL = await meetingService.AddMeeting(meeting, StepDates, Context);
+            meetings.Add(meetingL);
             toastService.ShowSuccess("Meeting saved");
+            StepDates = new List<StepDate>();
             meeting = new Meeting();
+            StateHasChanged();
+
+        }
+    }
+
+
+    private async Task HandleValidSubmitUpdate()
+    {
+        if (SelectedValue == null)
+        {
+            toastService.ShowError("No steps defined, please add steps before creating a roadmap");
+        }
+        else
+        {
+
+            using var Context = DbFactory.CreateDbContext();
+            Modal.NewRoadmapId = roadmaps[SelectedValue].NewRoadmapId;
+            await meetingService.UpdateMeeting(Modal, StepDates, Context);
+
+            toastService.ShowSuccess("Roadmap saved");
             StateHasChanged();
 
         }
@@ -240,14 +343,16 @@
         {
             toastService.ShowError("You can only select one roadmap for a meeting.");
         }
-        if (values != null)
+        if (values != null && values.Length != 0)
         {
+            using var Context = DbFactory.CreateDbContext();
             SelectedValue = values.First();
-            StepDates = roadmaps[SelectedValue].RoadmapSteps.Select(step => new StepDate() { MeetingId = null, Step = step.Step, Date = DateTime.Now }).ToList();
+            StepDates = roadmapService.FindAllNewRoadmapStepsForNewRoadmap(roadmaps[SelectedValue],Context).Select(step => new StepDate() { MeetingId = null, StepId = step.StepId, Step = step, Date = DateTime.Now }).ToList();
         }
         else
         {
             SelectedValue = null;
+            StepDates = new List<StepDate>();
         }
         StateHasChanged();
     }

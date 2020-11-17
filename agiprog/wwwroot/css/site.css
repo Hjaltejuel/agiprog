@@ -14,6 +14,13 @@ html {
   padding: 2em;
   margin: 1em; }
 
+.modal-item-purp {
+  background: #323F5C;
+  border-radius: 50px;
+  color: white;
+  padding: 2em;
+  margin: 1em; }
+
 .modal-content {
   border-radius: 1.5rem; }
 

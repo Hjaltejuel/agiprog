@@ -29,11 +29,29 @@ namespace agiprog.Data
             return Context.Meetings.ToList();
         }
 
-        public async Task<String> AddMeeting(Meeting meeting, agiprogContext Context)
+        public async Task<Meeting> AddMeeting(Meeting meeting, List<StepDate> stepDates, agiprogContext Context)
         {
-            Context.Meetings.Add(meeting);
+
+            var r = new Meeting() { Name = meeting.Name, NewRoadmapId = meeting.NewRoadmapId  };
+            Context.Meetings.Add(r);
             await Context.SaveChangesAsync();
-            return meeting.MeetingId;
+
+            var rs = stepDates.Select(step => new StepDate() { MeetingId = r.MeetingId, StepId = step.StepId, Step = null, Date = step.Date });
+            Context.StepDates.AddRange(rs);
+            await Context.SaveChangesAsync();
+            r.StepDates = rs.ToList();
+            return r;
+
+        }
+
+        public async Task<String> UpdateMeeting(Meeting Meeting, List<StepDate> stepDates, agiprogContext Context)
+        {
+            var stepDatesEx = await Context.StepDates.Where(s => s.MeetingId.Equals(Meeting.MeetingId)).ToListAsync();
+            Context.StepDates.RemoveRange(stepDatesEx);
+            Meeting.StepDates = stepDates;
+            Context.Update(Meeting);
+            await Context.SaveChangesAsync();
+            return Meeting.MeetingId;
         }
 
         public async Task RemoveMeeting(Meeting meeting, agiprogContext Context)
